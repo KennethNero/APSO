@@ -54,7 +54,7 @@ def logPSOOutput():
         # try:
         baselineConfidence = swarm.calculateBaselineConfidence()
         baselineLabel = swarm.label
-        if baselineLabel != 1:          # This means not benign
+        if baselineLabel != 2:          # This means not benign
             continue
         print("Searching Optimum Adversarial Example... %s\n" % i)
         swarm.initializeSwarmAndParticles()
