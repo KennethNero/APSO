@@ -154,7 +154,7 @@ class Swarm:
         if ret_code == 0:
             # Generate the output name of the new APK
             APKDir = str(os.path.dirname(self.apkFile))
-            newAPKPath = APKDir + obf_string+"_Particle_"+str(p.particleID)+"_"+str(apkBasename) # Add an output dir
+            newAPKPath = APKDir + "/" + obf_string+"_Particle_"+str(p.particleID)+"_"+str(apkBasename) # Add an output dir
 
             # Assign new path to the particle
             p.pathToAPK = newAPKPath
