@@ -137,9 +137,12 @@ class Swarm:
         apkFile = self.apkFile
         apkBasename = os.path.basename(apkFile)  # Could error out if the pathToApK is not actually a parsable path
 
-        from IPython import embed
-        embed()
-        cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + str(p.currentPosition) + "/root/Automation/dump/" + str(p.particleID)
+        #from IPython import embed
+        #embed()
+        obf_string = ""
+        for e in p.currentPosition:
+            obf_string += str(e)
+        cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + obf_string + "/root/Automation/dump/" + str(p.particleID)
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         # /root/Automation/a02_mal.apk[0,
         # ^ FIX THAT
@@ -151,7 +154,7 @@ class Swarm:
         if ret_code == 0:
             # Generate the output name of the new APK
             APKDir = str(os.path.dirname(self.apkFile))
-            newAPKPath = APKDir + str(p.currentPosition)+"_Particle_"+str(p.particleID)+"_"+str(apkBasename) # Add an output dir
+            newAPKPath = APKDir + obf_string+"_Particle_"+str(p.particleID)+"_"+str(apkBasename) # Add an output dir
 
             # Assign new path to the particle
             p.pathToAPK = newAPKPath
