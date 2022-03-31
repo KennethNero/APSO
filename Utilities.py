@@ -96,6 +96,8 @@ def get_probs(x):
     conf = out.split()[-1]  # Make sure this works
     label = out.split()[-2]
 
+    from IPython import embed
+    embed()
     return [int(label), float(conf)]
 
 
