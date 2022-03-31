@@ -1,3 +1,5 @@
+# CHANGE THIS - LOAD THE MODEL, ITR over samples
+
 import os
 import magic
 #import secml_malware

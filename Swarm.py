@@ -1,215 +1,174 @@
+import os.path
+
 from particle import particle
-from Utilities import fitnessScore,get_probs
+from Utilities import fitnessScore, get_probs
 import numpy as np
 from copy import deepcopy
 import random
-from Dataset import loadSurrogate
-import r2parser
-import os
-import x86handler as x86handler
+import subprocess
+
 from IPython import embed
+
 random.seed(0)
 np.random.seed(0)
 
+
 class Swarm:
 
-    def __init__(self,numOfParticles,randomMutation,maxQueries,x,C1,C2,e):
-        self.numberOfParticles=numOfParticles
-        self.targetModel=loadSurrogate()
-        self.bestFitness=0
-        #_,self.dLength,_ = self.targetModel.layers[1].output_shape
-        self.dLength = 2**20
-        self.numberOfQueries=0
-        self.bestPosition=[255]*self.dLength
-        self.randomMutation=randomMutation
-        self.maxQueries=maxQueries
-        self.pastFitness=[]
-        self.inputX=x
-        self.earlyTermination=e
-        try:
-            self.getOpCodesWithPatches(self.inputX)
-        except:
-            raise Exception("Analysis of opcodes failed...Skipping this sample")
-        self.setCs(C1,C2)
-        self.x86_handler=x86handler.X86Handler(32,False,False)
-        
-    def getOpCodesWithPatches(self,pos):
-        with open('tmp','wb') as f:
-            f.write(pos)
-        r = r2parser.R2Parser('tmp', True)
-        patches = r.iterate_fcn()
-        #Spliting the results is a bit hacky but its the fastest way to implement this. We should look into regex for a more cleaner implementation.
-        #Here I split according to spaces as that is how the R2 commands returns the results, and this works most of the time.
-        #Very rarely do the opcodes appear in a different position which prompted the if in the loop
-        #Example: 0x0042aff5      85ff           test edi, edi\n', (Good after splitting)
-        #Example: 0x0042acf9      b920000000     mov ecx, 0x20               ; 32\n', (Bad after splitting, ; denotes a comment in assembly so safe to discard)
-        self.replacements={}
-        self.originalOpcode={}
-        for add in patches:
-            if ';' in r.r2.cmd('pd 1 @ %s'%add['offset']).split('   ')[-1].strip():
-                continue
-            originalOpcode=[r.r2.cmd('pd 1 @ %s'%add['offset']).split('     ')[-1].strip()]
-            self.originalOpcode[add['offset']]=deepcopy(originalOpcode[0])
-            subs=add['subs']
-            originalOpcode.extend(subs)
-            self.replacements[add['offset']]=originalOpcode
-        r.close()
-        os.remove('tmp')
-        
-    def patchTempFile(self,pos):
-        with open('tmp','wb') as f:
-            f.write(self.inputX)
-        r = r2parser.R2Parser('tmp', False,write=True)
-        replacements=[]
-        for offset in pos:
-            replacements.append({"offset":offset,"newbytes":self.x86_handler.assemble_code(pos[offset])})
-        r.patch_binary(replacements)
-        r.close()
-        with open('tmp','rb') as f:
-            newPos=f.read()
-        os.remove('tmp')
-        return newPos
-        
-    def setBestPosition(self,newPosition):
-        self.bestPosition=deepcopy(newPosition)
-            
-    def setCs(self,C1,C2):       
-        self.C1=C1
-        self.C2=C2
-        
-    def setBestFitnessScore(self,newScore):
-        self.bestFitness=newScore
-        
+    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e):
+        """
+
+        Parameters
+        ----------
+        numOfParticles = num particles in PSO
+        randomMutation = random mutation chance for each particle
+        maxQueries = number of stages of PSO we want to accomplish
+        x = FilePath
+        C1 = constant that controls exploration
+        C2 = constant that controls explotiation
+        e = terminating condition (in our case, it will be the num of iterations w/o improvement)
+        """
+        self.particles = []
+        self.label = 2
+        self.numberOfParticles = numOfParticles
+        self.bestFitness = 0
+        self.dLength = 2 ** 17  # 2 choices, 17 dimensions
+        self.numberOfQueries = 0
+        self.bestPosition = [0] * self.dLength  # Everything starts as on in 17 dimensions
+        self.randomMutation = randomMutation
+        self.maxQueries = maxQueries
+        self.pastFitness = []
+        self.apkFile = x                # Original APK file PATH that is being modified xyz.apk
+        self.earlyTermination = e
+        self.C1 = C1
+        self.C2 = C2
+
+    def setBestPosition(self, newPosition):
+        self.bestPosition = deepcopy(newPosition)
+
+
+    def setBestFitnessScore(self, newScore):
+        self.bestFitness = newScore
+
+
     def calculateBaselineConfidence(self):
-        pred=get_probs(self.targetModel,self.inputX)
-        self.baselineConfidence=pred
-        self.bestProba=pred
-        return pred
+        """
+        Establishes baseline confidence and best probability based on assessment of the input file through a dry run
+        of the ML model.
+        """
+        pred, conf = get_probs(self.apkFile)        # Get the confidence f
+        self.baselineConfidence = conf              # This is base
+        self.bestProba = conf                       # This changes
+        return conf
 
-    def resetParticlesSearchSpaces(self):
-        for p in self.particles:
-            p.searchSpace={}
-            
-    def generateSearchSpaces(self):
-        self.searchSpaces={o:deepcopy(self.replacements[o]) for o in self.replacements}
-    
-    def returnRandomSearchSpaces(self,p):
-        keys=random.sample(list(self.searchSpaces.keys()),self.changeRate if self.changeRate<=len(self.searchSpaces) else len(self.searchSpaces))
-        iss=self.iterateKeys(p,keys)
-        if len(self.searchSpaces)==0:
-            self.flag=True
-        if len(iss)==0:
-            return []
-        else:
-            return iss
-
-    def iterateKeys(self,p,keys):
-        iss={}
-        for key in keys:
-            if len(iss)>=self.changeRate:
-                break
-            if len(self.searchSpaces[key])==0:
-                self.searchSpaces.pop(key,None)
-                continue
-            p.searchSpace[key]=[]
-            directionsToSample=self.searchSpaces[key]
-            if not directionsToSample:
-                continue
-            lowLevel=random.choice(directionsToSample)
-            iss[key]=lowLevel
-            p.searchSpace[key].append(lowLevel)
-            self.searchSpaces[key].remove(lowLevel)
-            if len(self.searchSpaces[key])==0:
-                self.searchSpaces.pop(key,None)
-        return iss
-        
     def initializeSwarmAndParticles(self):
+        """
+        Does what it says on the box.
+        """
         print('Initializing Swarm and Particles...\n')
         self.initializeSwarm()
         self.initializeParticles()
-        
+
     def initializeSwarm(self):
-        print("Generating search space...\n")
-        self.generateSearchSpaces()
-        self.changeRate=int(np.ceil(len(self.searchSpaces)/self.numberOfParticles))
-        self.flag=False
-        self.setBestPosition(self.originalOpcode)
-        self.bestPosition={p:self.bestPosition[p] for p in self.bestPosition}
-        self.setBestFitnessScore(0) 
-        
+        """
+        Sets up the swarm with our most basic assumptions. Establish how much the particles change, set the intiial
+        flag that would stop the process to off (flicks to on if enough iterations go by with no change), establishes
+        a baseline best position of [no change] and similarly for the fitness score.
+        """
+        self.changeRate = 3/17      # Chances, each iter, 3 obfuscators out of the 17 present
+        self.flag = False           # Tells us if there is no change after n number of iterations
+        self.bestPosition = [00000000000000000]
+        self.setBestFitnessScore(0)
+
     def initializeParticles(self):
-        particleList=[]        
+        particleList = []
         for x in range(self.numberOfParticles):
-            p=None
-            p=particle(x)
-            p.setW(self.C1,self.C2)
-            p.currentVelocity={}
-            replacementsVelocity={}
-            for offset in self.originalOpcode:
-                replacementsVelocity[offset]={}
-                for replacement in self.replacements[offset]:
-                    replacementsVelocity[offset][replacement]=np.random.uniform(0.0,1.0)
-                p.currentVelocity[offset]=replacementsVelocity[offset]
-            p.setBestFitnessScore(self.bestFitness)
-            p.setBestPosition(self.bestPosition)
-            self.randomizeParticle(p,self.originalOpcode)
+            # Set up the initial particle
+            p = particle(x)
+            p.setW(self.C1, self.C2)
+            p.currentVelocity = {}
+            self.randomizeParticle(p, p.currentPosition)
             particleList.append(deepcopy(p))
-        self.particles=deepcopy(particleList)
-            
-    def randomizeParticle(self,p,basePosition):
-        temp=deepcopy(basePosition)
-        iss=self.returnRandomSearchSpaces(p)
-        if not iss:
-            return False
-        for x in iss:
-            temp[x]=iss[x]
-        p.setCurrentPosition(temp)
+        self.particles = deepcopy(particleList)
+
+    def randomizeParticle(self, p, basePosition):
+        """
+        Randomly selects obfuscators based on the velocity, applies them to a file, and returns the modified filename
+        of the apk after it was modified.
+        """
+        p.currentVelocity = [np.random.uniform(0.0, 1.0) for i in range(17)]  # Randomize init particle
+        p.currentPosition = [1 if p.currentVelocity[i] <= self.changeRate else 0 for i in range(17)]
         self.check(p)
-        p.pastPositions.append(p.currentPosition) 
+
+        p.pastPositions.append(p.currentPosition)
         return True
-        
-    def searchOptimum(self,sampleNumber=None):
-        if self.bestProba < 0.5:
-            return self.bestPosition , self.bestFitness,0,self.numberOfQueries
-        iteration=1
-        while self.numberOfQueries<self.maxQueries:
-            if self.bestProba < 0.5:
-                return self.bestPosition , self.bestFitness,iteration,self.numberOfQueries
+
+    def searchOptimum(self, sampleNumber=None):
+        if self.label != 2:
+            return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
+        iteration = 1
+
+        while self.numberOfQueries < self.maxQueries:
+            if self.label != 2:
+                return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
+
             for p in self.particles:
-                if self.flag:
-                    print("Re-generating search space...\n")
-                    self.generateSearchSpaces()
-                    self.resetParticlesSearchSpaces()
-                    self.flag=False
-                self.randomizeParticle(p,p.currentPosition)
-                p.calculateNextPosition(self.bestPosition,self.numberOfQueries,self.C1,self.C2,self.maxQueries)   
+                # self.randomizeParticle(p, p.currentPosition)
+                p.calculateNextPosition(self.bestPosition, self.numberOfQueries, self.C1, self.C2, self.maxQueries)
                 self.check(p)
             self.pastFitness.append(self.bestFitness)
-            print('Iteration %s - Best Fitness %s - Number of Queries %s'%(str(iteration),str(self.bestFitness),str(self.numberOfQueries)))
-            if self.earlyTermination>0 and len(self.pastFitness)>=self.earlyTermination and len(set(self.pastFitness))==1:
-                return deepcopy(self.bestPosition) , self.bestFitness, iteration ,self.numberOfQueries
-            if self.bestProba < 0.5:
-                return deepcopy(self.bestPosition) , self.bestFitness, iteration ,self.numberOfQueries
-            iteration=iteration+1
-        print("Number of Queries: %s"%(self.numberOfQueries))
-        return deepcopy(self.bestPosition) , self.bestFitness, iteration ,self.numberOfQueries       
+            print('Iteration %s - Best Fitness %s - Number of Queries %s' % (
+            str(iteration), str(self.bestFitness), str(self.numberOfQueries)))
 
-    def check(self,p):
-        newPos=self.patchTempFile(p.currentPosition)
-        newFitness,newProba=fitnessScore(newPos,self.targetModel,self.baselineConfidence)
-#        print("Particle ID %s, Fitness %s, Model confidence %s" %(p.particleID,newFitness,newProba))
-        self.numberOfQueries=self.numberOfQueries+1
-        p.setCurrentFitnessScore(newFitness)
-        if newFitness > p.bestFitness:
-            p.setBestFitnessScore(newFitness)
-            p.setBestPosition(p.currentPosition)
-        if p.bestFitness > self.bestFitness:
-            self.setBestFitnessScore(p.bestFitness)
-            self.setBestPosition(p.bestPosition)
-            self.bestProba=deepcopy(newProba)
-            
-    def numberOfChanges(self):
-        numberOfChanges=sum([1 for x in self.originalOpcode if not self.originalOpcode[x] == self.bestPosition[x]])
-        return numberOfChanges
-                
-        
+            if self.earlyTermination > 0 and len(self.pastFitness) >= self.earlyTermination and len(
+                    set(self.pastFitness)) == 1:
+                return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
+            if self.label != 2:
+                return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
+            iteration = iteration + 1
+        print("Number of Queries: %s" % (self.numberOfQueries))
+        return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
+
+    def check(self, p):
+        """
+        p is our particle
+        new positon is current position
+        """
+        apkFile = self.apkFile
+        apkBasename = os.path.basename(apkFile)  # Could error out if the pathToApK is not actually a parsable path
+
+        cmd = "/root/Automation/gen_sample.sh " + str(self.apkFile) + str(p.currentPosition) + "/root/Automation/dump/" + str(p.particleID)
+        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+
+        # Communicate so the output goes to python, and is auto setting the return code
+        out, err = proc.communicate()
+        ret_code = proc.returncode
+
+        if ret_code == 0:
+            # Generate the output name of the new APK
+            APKDir = str(os.path.dirname(self.apkFile))
+            newAPKPath = APKDir + str(p.currentPosition)+"_Particle_"+str(p.particleID)+"_"+str(apkBasename) # Add an output dir
+
+            # Assign new path to the particle
+            p.pathToAPK = newAPKPath
+
+            # Run the assessment script on this path - get the confidence / label
+            newFitness, newProba, self.label = fitnessScore(p.pathToAPK, self.baselineConfidence)
+
+            # Increment metrics
+            self.numberOfQueries = self.numberOfQueries + 1
+            p.setCurrentFitnessScore(newFitness)
+
+            # Modify awareness of the best fitness of particle / swarm accordingly
+            if newFitness > p.bestFitness:
+                p.setBestFitnessScore(newFitness)
+                p.setBestPosition(p.currentPosition)
+            if p.bestFitness > self.bestFitness:
+                self.setBestFitnessScore(p.bestFitness)
+                self.setBestPosition(p.bestPosition)
+
+        else:
+            # This means that the obfuscation process made things bad
+            # Randomize the particle, try it again.
+            self.randomizeParticle(p, p.currentPosition)
+

@@ -1,3 +1,7 @@
+#!!Fix everything in here its all out of date because my project is different
+
+------
+
 # APSO
 This is an adversarial example attack against the Malconv malware detection model. Malware is changed using a modified version of the metamorphic engine that makes instruction replacements found publicly at *https://github.com/a0rtega/metame*. Particle Swarm Optimization is used to make intelligent changes to the malware executable instructions based on the output confidence of the model.
 
