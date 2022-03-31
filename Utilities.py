@@ -90,6 +90,7 @@ def get_probs(x):
     """
     # Terminating condition for a successful attack, prediction = 1
     # As the attack progresses, focus on label 2
+    print("Single_dan_test with "+str(x))
     cmd = "sudo bash /root/Automation/single_dan_test.sh " + str(x) + " /root/Automation/init_test/ 0"
     proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     out, err = proc.communicate()
