@@ -137,8 +137,12 @@ class Swarm:
         apkFile = self.apkFile
         apkBasename = os.path.basename(apkFile)  # Could error out if the pathToApK is not actually a parsable path
 
+        from IPython import embed
+        embed()
         cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + str(p.currentPosition) + "/root/Automation/dump/" + str(p.particleID)
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        # /root/Automation/a02_mal.apk[0,
+        # ^ FIX THAT
 
         # Communicate so the output goes to python, and is auto setting the return code
         out, err = proc.communicate()
