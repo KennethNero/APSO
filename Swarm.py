@@ -142,7 +142,7 @@ class Swarm:
         obf_string = ""
         for e in p.currentPosition:
             obf_string += str(e)
-        cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + obf_string + "/root/Automation/dump/" + str(p.particleID)
+        cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + "/root/Automation/dump/" + str(p.particleID)
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         # /root/Automation/a02_mal.apk[0,
         # ^ FIX THAT
