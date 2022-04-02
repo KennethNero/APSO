@@ -90,7 +90,8 @@ def get_probs(x):
     """
     # Terminating condition for a successful attack, prediction = 1
     # As the attack progresses, focus on label 2
-    print("Single_dan_test with "+str(x))
+    print("Single_dan_test with "+str(x))  #TODO: It doesn't like it here for some reason and apparently the file doesnt exist
+    #todo: MAYBE the file isnt being put where it should be??? Consult the texts.
     cmd = "sudo bash /root/Automation/single_dan_test.sh " + str(x) + " /root/Automation/init_test/ 0"
     proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     out, err = proc.communicate()
