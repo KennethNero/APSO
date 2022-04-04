@@ -82,8 +82,8 @@ class particle:
                 continue
 
         # self.currentVelocity = np.add(deepcopy(v), np.multiply(self.currentVelocity, self.W)) # Gone because it was making things too big
-        from IPython import embed
-        embed()
+        # from IPython import embed
+        # embed()
         return self.currentVelocity
 
 
