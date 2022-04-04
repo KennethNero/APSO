@@ -125,9 +125,11 @@ class Swarm:
             if self.earlyTermination > 0 and len(self.pastFitness) >= self.earlyTermination and len(
                     set(self.pastFitness)) == 1:
                 return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
+
             if self.label != 2:
                 return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
             iteration = iteration + 1
+
         print("Number of Queries: %s" % (self.numberOfQueries))
         return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
 
