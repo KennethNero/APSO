@@ -65,8 +65,8 @@ class particle:
         for i, x in enumerate(particleCurrentPosition):  # 16 long char array of 0s and 1s
             # i = index, x = value
 
-            from IPython import embed
-            embed()
+            # from IPython import embed
+            # embed()
 
             if particleCurrentPosition[i] == swarmBestPosition[i]:                 # pCurrent vs sBest
                 v[i] = C1*np.random.uniform(0.0, 1.0)
