@@ -72,7 +72,7 @@ class particle:
             # If either of these arent the same, move in that direction. If they are the best, stay.
             if particleCurrentPosition[i] != swarmBestPosition[i]:                 # pCurrent vs sBest
                 v[i] = C1*np.random.uniform(0.0, 1.0)
-                continue # if current is the not the best, then move in direction
+                continue
 
             # if (particleBestPosition[i] == swarmBestPosition[i]) and \
             #        not (swarmBestPosition[i] == particleCurrentPosition[i]):
@@ -82,6 +82,8 @@ class particle:
                 continue
 
         self.currentVelocity = np.add(deepcopy(v), np.multiply(self.currentVelocity, self.W))
+        from IPython import embed
+        embed()
         return self.currentVelocity
 
 
