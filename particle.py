@@ -70,7 +70,7 @@ class particle:
 
 
             # If either of these arent the same, move in that direction. If they are the best, stay.
-            if particleCurrentPosition[i] != swarmBestPosition[i]:                 # pCurrent vs sBest
+            if particleCurrentPosition[i] != swarmBestPosition[i]:
                 v[i] = C1*np.random.uniform(0.0, 1.0)
                 continue
 
@@ -81,7 +81,7 @@ class particle:
                 v[i] = C2*np.random.uniform(0.0, 1.0)
                 continue
 
-        self.currentVelocity = np.add(deepcopy(v), np.multiply(self.currentVelocity, self.W))
+        # self.currentVelocity = np.add(deepcopy(v), np.multiply(self.currentVelocity, self.W)) # Gone because it was making things too big
         from IPython import embed
         embed()
         return self.currentVelocity
@@ -93,6 +93,8 @@ class particle:
         for i, x in enumerate(nextPosition):
             if v[i] > np.random.uniform(0.0, 1.0):
                 nextPosition[i] = 1
+            else:
+                nextPosition[i] = 0  # If the velocity is high in that direction, make 1, else make it a zero. It can flip!!
         self.setCurrentPosition(nextPosition)
         return nextPosition
 
