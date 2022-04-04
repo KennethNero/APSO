@@ -159,6 +159,7 @@ class Swarm:
             # Generate the output name of the new APK
             APKDir = str(os.path.dirname(self.apkFile))
             newAPKPath = APKDir + "/" + obf_string+"_Particle_"+str(p.particleID)+"_"+str(apkBasename) # Add an output dir
+            print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
 
 
             # Assign new path to the particle
