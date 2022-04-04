@@ -144,6 +144,7 @@ class Swarm:
             obf_string += str(e)
         print("Gen sample script...")
         cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + "/root/Automation/dump/" + str(p.particleID)
+        print("\t\'" + str(cmd) + "\'")
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         # /root/Automation/a02_mal.apk[0,
         # ^ FIX THAT
