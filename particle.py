@@ -68,13 +68,16 @@ class particle:
             # from IPython import embed
             # embed()
 
-            if particleCurrentPosition[i] == swarmBestPosition[i]:                 # pCurrent vs sBest
+
+            # If either of these arent the same, move in that direction. If they are the best, stay.
+            if particleCurrentPosition[i] != swarmBestPosition[i]:                 # pCurrent vs sBest
                 v[i] = C1*np.random.uniform(0.0, 1.0)
-                continue
+                continue # if current is the not the best, then move in direction
 
+            # if (particleBestPosition[i] == swarmBestPosition[i]) and \
+            #        not (swarmBestPosition[i] == particleCurrentPosition[i]):
 
-            if (particleBestPosition[i] == swarmBestPosition[i]) and \
-                    not (swarmBestPosition[i] == particleCurrentPosition[i]):
+            if particleBestPosition[i] != particleCurrentPosition[i]:
                 v[i] = C2*np.random.uniform(0.0, 1.0)
                 continue
 
