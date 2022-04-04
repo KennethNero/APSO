@@ -99,6 +99,7 @@ class Swarm:
         """
         p.currentVelocity = [np.random.uniform(0.0, 1.0) for i in range(16)]  # Randomize init particle
         p.currentPosition = [1 if p.currentVelocity[i] <= self.changeRate else 0 for i in range(16)]
+        embed()
         self.check(p)
 
         p.pastPositions.append(p.currentPosition)
