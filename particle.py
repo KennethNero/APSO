@@ -17,7 +17,7 @@ class particle:
         self.pastPositions = []
         self.currentPosition = None
         self.nextPosition = None
-        self.bestPosition = None
+        self.bestPosition = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.currentVelocity = None
         self.pathToAPK = None           # One that its testing 0001110001_......apk
         self.currentFitness = 0
