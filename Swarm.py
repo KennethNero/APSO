@@ -77,7 +77,7 @@ class Swarm:
         """
         self.changeRate = 3.0/16.0  # Chances, each iter, 3 obfuscators out of the 17 present
         self.flag = False           # Tells us if there is no change after n number of iterations
-        self.bestPosition = [0000000000000000]
+        self.bestPosition = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.setBestFitnessScore(0)
 
     def initializeParticles(self):
