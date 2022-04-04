@@ -32,7 +32,7 @@ class Swarm:
         self.label = 2
         self.numberOfParticles = numOfParticles
         self.bestFitness = 0
-        self.dLength = 2 ** 17  # 2 choices, 17 dimensions
+        self.dLength = 2 ** 16  # 2 choices, 17 dimensions
         self.numberOfQueries = 0
         self.bestPosition = [0] * self.dLength  # Everything starts as on in 17 dimensions
         self.randomMutation = randomMutation
@@ -75,9 +75,9 @@ class Swarm:
         flag that would stop the process to off (flicks to on if enough iterations go by with no change), establishes
         a baseline best position of [no change] and similarly for the fitness score.
         """
-        self.changeRate = 3/17      # Chances, each iter, 3 obfuscators out of the 17 present
+        self.changeRate = 3/16      # Chances, each iter, 3 obfuscators out of the 17 present
         self.flag = False           # Tells us if there is no change after n number of iterations
-        self.bestPosition = [00000000000000000]
+        self.bestPosition = [0000000000000000]
         self.setBestFitnessScore(0)
 
     def initializeParticles(self):
@@ -96,8 +96,8 @@ class Swarm:
         Randomly selects obfuscators based on the velocity, applies them to a file, and returns the modified filename
         of the apk after it was modified.
         """
-        p.currentVelocity = [np.random.uniform(0.0, 1.0) for i in range(17)]  # Randomize init particle
-        p.currentPosition = [1 if p.currentVelocity[i] <= self.changeRate else 0 for i in range(17)]
+        p.currentVelocity = [np.random.uniform(0.0, 1.0) for i in range(16)]  # Randomize init particle
+        p.currentPosition = [1 if p.currentVelocity[i] <= self.changeRate else 0 for i in range(16)]
         self.check(p)
 
         p.pastPositions.append(p.currentPosition)

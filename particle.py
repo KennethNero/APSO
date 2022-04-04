@@ -62,7 +62,7 @@ class particle:
 
         v = deepcopy(self.currentVelocity)
 
-        for i, x in enumerate(particleCurrentPosition):  # 17 long char array of 0s and 1s
+        for i, x in enumerate(particleCurrentPosition):  # 16 long char array of 0s and 1s
             # i = index, x = value
 
             if particleCurrentPosition[i] == swarmBestPosition[i]:                 # pCurrent vs sBest
