@@ -75,7 +75,7 @@ class Swarm:
         flag that would stop the process to off (flicks to on if enough iterations go by with no change), establishes
         a baseline best position of [no change] and similarly for the fitness score.
         """
-        self.changeRate = float(3/16)      # Chances, each iter, 3 obfuscators out of the 17 present
+        self.changeRate = 3.0/16.0  # Chances, each iter, 3 obfuscators out of the 17 present
         self.flag = False           # Tells us if there is no change after n number of iterations
         self.bestPosition = [0000000000000000]
         self.setBestFitnessScore(0)
@@ -99,7 +99,7 @@ class Swarm:
         """
         p.currentVelocity = [np.random.uniform(0.0, 1.0) for i in range(16)]  # Randomize init particle
         p.currentPosition = [1 if p.currentVelocity[i] <= self.changeRate else 0 for i in range(16)]
-        embed()
+        #embed()
         self.check(p)
 
         p.pastPositions.append(p.currentPosition)
