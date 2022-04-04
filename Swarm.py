@@ -147,7 +147,8 @@ class Swarm:
         for e in p.currentPosition:
             obf_string += str(e)
         print("Gen sample script...")
-        cmd = "sudo bash /root/Automation/gen_sample.sh " + str(p.pathToAPK) + " " + obf_string + " /root/Automation/ " + str(p.particleID) + " " + str(self.apkFile)
+        # To compound the files, switch out str(self.apkFile) in first arg, to p.pathToAPK. USes a LOT of memory
+        cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + " /root/Automation/ " + str(p.particleID) + " " + str(self.apkFile)
         print("\t\'" + str(cmd) + "\'")
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 
