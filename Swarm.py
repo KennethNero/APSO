@@ -119,7 +119,7 @@ class Swarm:
                 p.calculateNextPosition(self.bestPosition, self.numberOfQueries, self.C1, self.C2, self.maxQueries)
                 self.check(p)
             self.pastFitness.append(self.bestFitness)
-            print('Iteration %s - Best Fitness %s - Number of Queries %s' % (
+            print('+ Iteration %s - Best Fitness %s - Number of Queries %s' % (
             str(iteration), str(self.bestFitness), str(self.numberOfQueries)))
 
             if self.earlyTermination > 0 and len(self.pastFitness) >= self.earlyTermination and len(
@@ -130,7 +130,7 @@ class Swarm:
                 return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
             iteration = iteration + 1
 
-        print("Number of Queries: %s" % (self.numberOfQueries))
+        print("== Number of Queries: %s" % (self.numberOfQueries))
         return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
 
     def check(self, p):
@@ -146,10 +146,10 @@ class Swarm:
         obf_string = ""
         for e in p.currentPosition:
             obf_string += str(e)
-        print("Gen sample script...")
+        # print("Gen sample script...")
         # To compound the files, switch out str(self.apkFile) in first arg, to p.pathToAPK. USes a LOT of memory
         cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + " /root/Automation/ " + str(p.particleID) + " " + str(self.apkFile)
-        print("\t\'" + str(cmd) + "\'")
+        # print("\t\'" + str(cmd) + "\'")
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 
         # Communicate so the output goes to python, and is auto setting the return code
@@ -160,7 +160,7 @@ class Swarm:
             # Generate the output name of the new APK
             APKDir = str(os.path.dirname(self.apkFile))
             newAPKPath = APKDir + "/" + obf_string+"_Particle_"+str(p.particleID)+"_"+str(apkBasename) # Add an output dir
-            print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
+            # print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
 
 
             # Assign new path to the particle
