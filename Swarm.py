@@ -117,12 +117,11 @@ class Swarm:
                 return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
 
             for p in self.particles:
-                # self.randomizeParticle(p, p.currentPosition)
                 p.calculateNextPosition(self.bestPosition, self.numberOfQueries, self.C1, self.C2, self.maxQueries)
                 self.check(p)
             self.pastFitness.append(self.bestFitness)
-            print('+ Iteration %s - Best Fitness %s - Number of Queries %s' % (
-            str(iteration), str(self.bestFitness), str(self.numberOfQueries)))
+            print('++ Iteration %s - Best Fitness %s - Best Position %s - Number of Queries %s' % (
+                str(iteration), str(self.bestFitness), str(self.bestPosition), (self.numberOfQueries)))
 
             if self.earlyTermination > 0 and len(self.pastFitness) >= self.earlyTermination and len(
                     set(self.pastFitness)) == 1:
@@ -142,9 +141,6 @@ class Swarm:
         """
         apkFile = self.apkFile
         apkBasename = os.path.basename(apkFile)  # Could error out if the pathToApK is not actually a parsable path
-
-        #from IPython import embed
-        #embed()
         obf_string = ""
         for e in p.currentPosition:
             obf_string += str(e)
@@ -163,18 +159,17 @@ class Swarm:
             APKDir = str(os.path.dirname(self.apkFile))
             newAPKPath = APKDir + "/" + obf_string+"_Particle_"+str(p.particleID)+"_"+str(apkBasename) # Add an output dir
             # print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
-
-
-            # Assign new path to the particle
             p.pathToAPK = newAPKPath
 
             # Run the assessment script on this path - get the confidence / label
-            newFitness, newProba, self.label = fitnessScore(p.pathToAPK, self.baselineConfidence)
+            newFitness, newProba, newLabel = fitnessScore(p.pathToAPK, self.baselineConfidence)
 
             # Increment metrics
             self.numberOfQueries = self.numberOfQueries + 1
             p.setCurrentFitnessScore(newFitness)
-            print("-- ParticleID: " + str(p.particleID)+" | Current Fitness: "+str(p.currentFitness)+" --")
+            print("-- ParticleID: " + str(p.particleID)+" | Current Fitness: "+str(p.currentFitness) +
+                  "\t| Position/Velocity: "+str(p.currentPosition)+"/"+str(p.currentVelocity) +
+                  " | Label/Confidence: "+str(self.label)+"/"+str(newProba))
 
             # Modify awareness of the best fitness of particle / swarm accordingly
             if newFitness > p.bestFitness:
@@ -182,6 +177,7 @@ class Swarm:
                 p.setBestPosition(p.currentPosition)
             if p.bestFitness > self.bestFitness:
                 self.setBestFitnessScore(p.bestFitness)
+                self.label = newLabel
                 self.setBestPosition(p.bestPosition)
 
         else:
