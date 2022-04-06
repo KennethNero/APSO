@@ -9,8 +9,8 @@ import subprocess
 
 from IPython import embed
 
-random.seed(0)
-np.random.seed(0)
+random.seed(1)
+np.random.seed(1)
 
 
 class Swarm:
