@@ -167,9 +167,14 @@ class Swarm:
             # Increment metrics
             self.numberOfQueries = self.numberOfQueries + 1
             p.setCurrentFitnessScore(newFitness)
+
+            posString = ""
+            for e in p.currentPosition:
+                posString += str(e)
+
             print("-- ParticleID: " + str(p.particleID)+" | Current Fitness: "+str(p.currentFitness) +
-                  "\t| Label/Confidence: " + str(self.label) + "/" + str(newProba) +
-                  "\n\t| Position/Velocity: "+str(p.currentPosition)+"/"+str(p.currentVelocity))
+                  "\t| Position: "+posString+" | Label / Confidence: " + str(self.label) + " / " + str(newProba) +
+                  "\n\t| Velocity: "+str(p.currentVelocity))
 
             # Modify awareness of the best fitness of particle / swarm accordingly
             if newFitness > p.bestFitness:
