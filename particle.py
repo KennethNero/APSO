@@ -16,6 +16,7 @@ class particle:
         self.bestFitness = 0
         self.pastPositions = []
         self.currentPosition = None
+        self.particleDistanceArr = []
         self.nextPosition = None
         self.bestPosition = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.currentVelocity = None
@@ -56,7 +57,7 @@ class particle:
     def standardVelocity(self, swarmBestPosition, T, C1, C2, maxIterations):
         # Establish unique baselines for math
         particleBestPosition = deepcopy(self.bestPosition)
-        particleCurrentPosition = deepcopy(self.currentPosition)
+        particleCurrentPosition = deepcopy(self.particleDistanceArr)
         swarmBestPosition = deepcopy(swarmBestPosition)
         self.calculateW(T, swarmBestPosition, maxIterations)
 
@@ -64,38 +65,28 @@ class particle:
 
         for i, x in enumerate(particleCurrentPosition):  # 16 long char array of 0s and 1s
             # i = index, x = value
-
-            # from IPython import embed
-            # embed()
-
-
             # If either of these arent the same, move in that direction. If they are the best, stay.
-            if particleCurrentPosition[i] != swarmBestPosition[i]:
-                v[i] = C1*np.random.uniform(0.0, 1.0)
-                continue
+            # maintain 2 lists, currentPosition, and the second one which will have distances
 
-            # if (particleBestPosition[i] == swarmBestPosition[i]) and \
-            #        not (swarmBestPosition[i] == particleCurrentPosition[i]):
+            exploration = C1*np.random.uniform(0.0, 1.0) * abs(swarmBestPosition[i] - particleCurrentPosition[i])
 
-            if particleBestPosition[i] != particleCurrentPosition[i]:
-                v[i] = C2*np.random.uniform(0.0, 1.0)
-                continue
+            exploitation = C2*np.random.uniform(0.0, 1.0) * abs(particleBestPosition[i] - particleCurrentPosition[i])
 
-        # self.currentVelocity = np.add(deepcopy(v), np.multiply(self.currentVelocity, self.W)) # Gone because it was making things too big
-        # from IPython import embed
-        # embed()
-        return self.currentVelocity
+            inertia = self.currentVelocity[i] * self.W
 
+            v[i] = exploration + exploitation + inertia
+
+        self.currentVelocity = deepcopy(v)
 
     def calculateNextPosition(self, swarmBestPosition, T, C1, C2, maxIterations):
-        v = self.standardVelocity(swarmBestPosition, T, C1, C2, maxIterations)
         nextPosition = deepcopy(self.currentPosition)
         for i, x in enumerate(nextPosition):
-            if v[i] > np.random.uniform(0.0, 1.0):
+            if self.currentVelocity[i] > np.random.uniform(0.0, 1.0):
                 nextPosition[i] = 1
             else:
                 nextPosition[i] = 0  # If the velocity is high in that direction, make 1, else make it a zero. It can flip!!
         self.setCurrentPosition(nextPosition)
+        self.particleDistanceArr = deepcopy(self.currentVelocity)
         return nextPosition
 
 

@@ -89,6 +89,8 @@ class Swarm:
             p.currentVelocity = {}
             p.pathToAPK = deepcopy(self.apkFile)
             self.randomizeParticle(p, p.currentPosition)
+
+            p.particleDistanceArr.extend(p.currentVelocity)
             particleList.append(deepcopy(p))
         self.particles = deepcopy(particleList)
 
