@@ -168,8 +168,8 @@ class Swarm:
             self.numberOfQueries = self.numberOfQueries + 1
             p.setCurrentFitnessScore(newFitness)
             print("-- ParticleID: " + str(p.particleID)+" | Current Fitness: "+str(p.currentFitness) +
-                  "\t| Position/Velocity: "+str(p.currentPosition)+"/"+str(p.currentVelocity) +
-                  " | Label/Confidence: "+str(self.label)+"/"+str(newProba))
+                  "\t| Label/Confidence: " + str(self.label) + "/" + str(newProba) +
+                  "\n\t| Position/Velocity: "+str(p.currentPosition)+"/"+str(p.currentVelocity))
 
             # Modify awareness of the best fitness of particle / swarm accordingly
             if newFitness > p.bestFitness:
