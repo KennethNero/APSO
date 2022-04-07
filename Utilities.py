@@ -101,6 +101,7 @@ def get_probs(x):
 
     # from IPython import embed
     # embed()
+    print("\t\tDEBUG:: get_probs - out = '"+str(out)+"'")
     return [int(label), float(conf)]
 
 
