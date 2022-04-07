@@ -67,7 +67,7 @@ def logPSOOutput():
         finalPosition = swarm.apkFile
         labelAfter, predAfter = get_probs(finalPosition)
         print(swarm.apkFile)
-        numberOfChanges = sum([int(pos) for pos in swarm.apkFile[0:16]])
+        numberOfChanges = sum([int(pos) for pos in swarm.bestPosition[0:16]])
         print('Model Prediction After PSO= %s' % (str(predAfter)))  # later change 1= benign, 2 = mal
         print('Required number of changes (L1)= %s' % (numberOfChanges))
         with open('Malware_Samples_PSO_Results.csv', 'a') as f:
