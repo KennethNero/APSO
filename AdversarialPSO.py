@@ -54,8 +54,8 @@ def logPSOOutput():
         # try:
         baselineConfidence = swarm.calculateBaselineConfidence()
         baselineLabel = swarm.label
-        if baselineLabel != 2:          # This means not benign
-            continue
+        # if baselineLabel != 2:          # This means not malicious
+        #     continue
         print("Searching Optimum Adversarial Example... %s\n" % i)
         swarm.initializeSwarmAndParticles()
         print('Model Prediction Before PSO= %s\n' % baselineLabel)
@@ -66,7 +66,6 @@ def logPSOOutput():
         print('Best Fitness Score= %s' % swarm.bestFitness)
         finalPosition = swarm.apkFile
         labelAfter, predAfter = get_probs(finalPosition)
-        print(swarm.apkFile)
         numberOfChanges = sum([int(pos) for pos in swarm.bestPosition[0:16]])
         print('Model Prediction After PSO= %s' % (str(predAfter)))  # later change 1= benign, 2 = mal
         print('Required number of changes (L1)= %s' % (numberOfChanges))

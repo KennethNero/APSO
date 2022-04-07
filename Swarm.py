@@ -9,8 +9,8 @@ import subprocess
 
 from IPython import embed
 
-random.seed(1)
-np.random.seed(1)
+random.seed(0)
+np.random.seed(0)
 
 
 class Swarm:
@@ -57,6 +57,7 @@ class Swarm:
         of the ML model.
         """
         pred, conf = get_probs(self.apkFile)        # Get the confidence f
+        self.label = pred                           # This is base
         self.baselineConfidence = conf              # This is base
         self.bestProba = conf                       # This changes
         return conf
