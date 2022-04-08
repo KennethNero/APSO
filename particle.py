@@ -75,9 +75,6 @@ class particle:
 
             v[i] = exploration + exploitation + inertia
 
-        from IPython import embed
-        embed()
-
         self.currentVelocity = deepcopy(v)
 
     def calculateNextPosition(self, swarmBestPosition, T, C1, C2, maxIterations):
