@@ -7,8 +7,6 @@ from copy import deepcopy
 import random
 import subprocess
 
-from IPython import embed
-
 random.seed(0)
 np.random.seed(0)
 
@@ -28,11 +26,17 @@ class Swarm:
         C2 = constant that controls explotiation
         e = terminating condition (in our case, it will be the num of iterations w/o improvement)
         """
+        # The fields the python linting gods demand we have
+        self.changeRate = None
+        self.flag = None
+        self.bestProba = None
+        self.baselineConfidence = None
+        # The actual fields we need RIGHT NOW
         self.particles = []
         self.label = 2
         self.numberOfParticles = numOfParticles
         self.bestFitness = 0
-        self.dLength = 2 ** 16  # 2 choices, 17 dimensions
+        self.dLength = 2 ** 16  # 2 choices, 16 dimensions
         self.numberOfQueries = 0
         self.bestPosition = [0] * self.dLength  # Everything starts as on in 17 dimensions
         self.randomMutation = randomMutation
@@ -46,10 +50,8 @@ class Swarm:
     def setBestPosition(self, newPosition):
         self.bestPosition = deepcopy(newPosition)
 
-
     def setBestFitnessScore(self, newScore):
         self.bestFitness = newScore
-
 
     def calculateBaselineConfidence(self):
         """
@@ -86,7 +88,7 @@ class Swarm:
         for x in range(self.numberOfParticles):
             # Set up the initial particle
             p = particle(x)
-            p.setW(self.C1, self.C2)
+            p.setW()
             p.currentVelocity = {}
             p.pathToAPK = deepcopy(self.apkFile)
             self.randomizeParticle(p, p.currentPosition)
@@ -102,13 +104,12 @@ class Swarm:
         """
         p.currentVelocity = [np.random.uniform(0.0, 1.0) for i in range(16)]  # Randomize init particle
         p.currentPosition = [1 if p.currentVelocity[i] <= self.changeRate else 0 for i in range(16)]
-        #embed()
         self.check(p)
 
         p.pastPositions.append(p.currentPosition)
         return True
 
-    def searchOptimum(self, sampleNumber=None):
+    def searchOptimum(self):
         if self.label != 2:
             return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
         iteration = 1
@@ -128,15 +129,15 @@ class Swarm:
             print('++ Iteration %s - Best Fitness %s - Best Position %s - Confidence %s - Number of Queries %s' % (
                 str(iteration), str(self.bestFitness), posString, self.bestProba, self.numberOfQueries))
 
-            if self.earlyTermination > 0 and len(self.pastFitness) >= self.earlyTermination and len(
-                    set(self.pastFitness)) == 1:
+            if self.earlyTermination > 0 and len(self.pastFitness[(-1*self.earlyTermination):]) >= self.earlyTermination\
+                    and len(set(self.pastFitness[(-1*self.earlyTermination):])) == 1:
                 return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
 
             if self.label != 2:
                 return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
             iteration = iteration + 1
 
-        print("== Number of Queries: %s" % (self.numberOfQueries))
+        print("== Number of Queries: %s" % self.numberOfQueries)
         return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
 
     def check(self, p):
@@ -151,7 +152,8 @@ class Swarm:
             obf_string += str(e)
         # print("Gen sample script...")
         # To compound the files, switch out str(self.apkFile) in first arg, to p.pathToAPK. USes a LOT of memory
-        cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + " /root/Automation/ " + str(p.particleID) + " " + str(self.apkFile)
+        cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + \
+              " /root/Automation/ " + str(p.particleID) + " " + str(self.apkFile)
         # print("\t\'" + str(cmd) + "\'")
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 
@@ -162,7 +164,7 @@ class Swarm:
         if ret_code == 0:
             # Generate the output name of the new APK
             APKDir = str(os.path.dirname(self.apkFile))
-            newAPKPath = APKDir + "/" + obf_string+"_Particle_"+str(p.particleID)+"_"+str(apkBasename) # Add an output dir
+            newAPKPath = APKDir + "/" + obf_string+"_Particle_"+str(p.particleID)+"_"+str(apkBasename)
             # print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
             p.pathToAPK = newAPKPath
 
@@ -200,4 +202,3 @@ class Swarm:
             # This means that the obfuscation process made things bad
             # Randomize the particle, try it again.
             self.randomizeParticle(p, p.currentPosition)
-

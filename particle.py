@@ -24,28 +24,22 @@ class particle:
         self.pathToAPK = None           # One that its testing 0001110001_......apk
         self.currentFitness = 0
 
-
-
     def setNextPosition(self, newPosition):
         self.nextPosition = deepcopy(newPosition)
-
 
     def setCurrentPosition(self, newPosition):
         self.currentPosition = deepcopy(newPosition)
 
-
     def setBestPosition(self, newPosition):
         self.bestPosition = deepcopy(newPosition)
-
 
     def setBestFitnessScore(self, newScore):
         self.bestFitness = newScore
 
-
     def setCurrentFitnessScore(self, newScore):
         self.currentFitness = newScore
 
-    def setW(self, C1, C2):
+    def setW(self):
         self.wEND = 0.2
         self.wSTART = 0.8
 
@@ -83,11 +77,11 @@ class particle:
             if self.currentVelocity[i] > np.random.uniform(0.0, 1.0):
                 nextPosition[i] = 1
             else:
-                nextPosition[i] = 0  # If the velocity is high in that direction, make 1, else make it a zero. It can flip!!
+                # If the velocity is high in that direction, make 1, else make it a zero. It can flip!!
+                nextPosition[i] = 0
         self.setCurrentPosition(nextPosition)
         self.particleDistanceArr = deepcopy(self.currentVelocity)
         return nextPosition
-
 
     def calculateW(self, T, swarmBestPosition, maxIterations):
         # dONT CHANGE THIS
