@@ -168,6 +168,7 @@ class Swarm:
 
             # Run the assessment script on this path - get the confidence / label
             newFitness, newProba, newLabel = fitnessScore(p.pathToAPK, self.baselineConfidence)
+            os.remove(newAPKPath)
 
             # Increment metrics
             self.numberOfQueries = self.numberOfQueries + 1

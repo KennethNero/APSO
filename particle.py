@@ -45,15 +45,12 @@ class particle:
     def setCurrentFitnessScore(self, newScore):
         self.currentFitness = newScore
 
-
     def setW(self, C1, C2):
         self.wEND = 0.2
         self.wSTART = 0.8
 
-
     def printParticleInformation(self):
         print('Particle %s -- Best Fitness %s \n' % (str(self.particleID), str(self.bestFitness)))
-
 
     def standardVelocity(self, swarmBestPosition, T, C1, C2, maxIterations):
         # Establish unique baselines for math
