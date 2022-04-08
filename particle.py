@@ -75,6 +75,8 @@ class particle:
             inertia = self.currentVelocity[i] * self.W
 
             v[i] = exploration + exploitation + inertia
+            from IPython import embed
+            embed()
 
         self.currentVelocity = deepcopy(v)
 
