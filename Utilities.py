@@ -48,8 +48,8 @@ def chunks(l, n):
             yield l[i:i + n]
 
 
-def sigmoid(x, m):
-    return m / (1 + exp(-x))
+def sigmoid(x):
+    return 1 / (1 + exp(-x))
 
 
 def is_ascii(s):
