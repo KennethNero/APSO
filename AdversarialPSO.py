@@ -69,19 +69,17 @@ def logPSOOutput():
         print('Model Prediction Before PSO= %s\n' % baselineLabel)
         print('Baseline Confidence= %s\n' % (str(baselineConfidence)))
         _, _, iterations, numberOfQueries = swarm.searchOptimum()
-        modelConfidence = baselineConfidence - swarm.bestFitness
-        print('Model Confidence After PSO %s' % modelConfidence)
+        modelConfidence = swarm.bestProba  # could be baselineFitness - best fitness
+        print('Model Confidence After PSO= %s' % modelConfidence)
         print('Best Fitness Score= %s' % swarm.bestFitness)
-        finalPosition = swarm.apkFile
-        labelAfter, predAfter = get_probs(finalPosition)
         numberOfChanges = sum([int(pos) for pos in swarm.bestPosition[0:16]])
-        print('Model Prediction After PSO= %s' % (str(predAfter)))  # later change 1= benign, 2 = mal
+        print('Model Prediction After PSO= %s' % (str(swarm.label)))  # later change 1= benign, 2 = mal
         print('Required number of changes (L1)= %s' % numberOfChanges)
         with open('Malware_Samples_PSO_Results.csv', 'a') as f:
             f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % (
                 samplePath, str(baselineConfidence),
-                str(1 - baselineConfidence), labelAfter, str(modelConfidence),
-                str(swarm.bestFitness), str(predAfter), str(iterations), str(numberOfChanges), str(numberOfQueries)))
+                str(1 - baselineConfidence), str(swarm.baseLabel), str(modelConfidence),
+                str(swarm.bestFitness), str(swarm.label), str(iterations), str(numberOfChanges), str(numberOfQueries)))
 
 
 if __name__ == "__main__":

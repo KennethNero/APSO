@@ -33,6 +33,7 @@ class Swarm:
         self.baselineConfidence = None
         # The actual fields we need RIGHT NOW
         self.particles = []
+        self.baseLabel = None
         self.label = 2
         self.numberOfParticles = numOfParticles
         self.bestFitness = 0
@@ -59,7 +60,10 @@ class Swarm:
         of the ML model.
         """
         pred, conf = get_probs(self.apkFile)        # Get the confidence f
-        self.label = pred                           # This is base
+
+        self.baseLabel = pred                       # This is base
+        self.label = pred                           # This changes
+
         self.baselineConfidence = conf              # This is base
         self.bestProba = conf                       # This changes
         return conf
