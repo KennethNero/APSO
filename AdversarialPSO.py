@@ -42,7 +42,12 @@ C2 = 1
 
 def logPSOOutput():
     if inputDir is not None:
-        samples = os.listdir(inputDir)
+        samples = []
+        for dirPath, _, fileNames in os.walk(inputDir):
+            for f in fileNames:
+                samples.append(os.path.abspath(os.path.join(dirPath, f)))
+
+        # samples = os.listdir(inputDir)
     else:
         samples = [inputSample]
     with open('Malware_Samples_PSO_Results.csv', 'w') as f:
