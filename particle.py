@@ -74,14 +74,14 @@ class particle:
 
             inertia = self.currentVelocity[i] * self.W
 
-            v[i] = exploration + exploitation + inertia
+            v[i] = sigmoid(exploration + exploitation + inertia)
 
         self.currentVelocity = deepcopy(v)
 
     def calculateNextPosition(self, swarmBestPosition, T, C1, C2, maxIterations):
         nextPosition = deepcopy(self.currentPosition)
         self.standardVelocity(swarmBestPosition, T, C1, C2, maxIterations)
-        self.currentVelocity = sigmoid(self.currentVelocity)
+
         for i, x in enumerate(nextPosition):
             if self.currentVelocity[i] > np.random.uniform(0.0, 1.0):
                 nextPosition[i] = 1
