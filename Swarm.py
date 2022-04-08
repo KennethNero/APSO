@@ -121,8 +121,12 @@ class Swarm:
                 p.calculateNextPosition(self.bestPosition, self.numberOfQueries, self.C1, self.C2, self.maxQueries)
                 self.check(p)
             self.pastFitness.append(self.bestFitness)
-            print('++ Iteration %s - Best Fitness %s - Best Position %s - Number of Queries %s' % (
-                str(iteration), str(self.bestFitness), str(self.bestPosition), (self.numberOfQueries)))
+            posString = ""
+            for e in self.bestPosition:
+                posString += str(e)
+
+            print('++ Iteration %s - Best Fitness %s - Best Position %s - Confidence %s - Number of Queries %s' % (
+                str(iteration), str(self.bestFitness), posString, self.bestProba, self.numberOfQueries))
 
             if self.earlyTermination > 0 and len(self.pastFitness) >= self.earlyTermination and len(
                     set(self.pastFitness)) == 1:
