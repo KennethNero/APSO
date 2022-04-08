@@ -110,19 +110,25 @@ class Swarm:
         return True
 
     def searchOptimum(self):
+
+        # If its not malicious then exit
         if self.label != 2:
             return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
         iteration = 1
 
+        # While we have queries left and are still malicious
         while self.numberOfQueries < self.maxQueries:
             if self.label != 2:
                 return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
 
+            # Get the next position, and check / update those positions while adding them to the historical record
             for p in self.particles:
                 p.calculateNextPosition(self.bestPosition, self.numberOfQueries, self.C1, self.C2, self.maxQueries)
                 self.check(p)
             self.pastFitness.append(self.bestFitness)
             posString = ""
+
+            # Utility method don't think too much about it
             for e in self.bestPosition:
                 posString += str(e)
 
@@ -194,6 +200,7 @@ class Swarm:
                 p.setBestFitnessScore(newFitness)
                 p.setBestPosition(p.currentPosition)
             if p.bestFitness > self.bestFitness:
+                self.bestProba = newProba
                 self.setBestFitnessScore(p.bestFitness)
                 self.label = newLabel
                 self.setBestPosition(p.bestPosition)
