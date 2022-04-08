@@ -67,7 +67,6 @@ class particle:
             # i = index, x = value
             # If either of these arent the same, move in that direction. If they are the best, stay.
             # maintain 2 lists, currentPosition, and the second one which will have distances
-            print("Enumerating")
             exploration = C1*np.random.uniform(0.0, 1.0) * abs(swarmBestPosition[i] - particleCurrentPosition[i])
 
             exploitation = C2*np.random.uniform(0.0, 1.0) * abs(particleBestPosition[i] - particleCurrentPosition[i])
@@ -83,6 +82,8 @@ class particle:
 
     def calculateNextPosition(self, swarmBestPosition, T, C1, C2, maxIterations):
         nextPosition = deepcopy(self.currentPosition)
+        self.standardVelocity(swarmBestPosition, T, C1, C2, maxIterations)
+
         for i, x in enumerate(nextPosition):
             if self.currentVelocity[i] > np.random.uniform(0.0, 1.0):
                 nextPosition[i] = 1
