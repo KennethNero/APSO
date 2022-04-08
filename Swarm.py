@@ -66,7 +66,7 @@ class Swarm:
 
         self.baselineConfidence = conf              # This is base
         self.bestProba = conf                       # This changes
-        return conf
+        return conf, pred
 
     def initializeSwarmAndParticles(self):
         """

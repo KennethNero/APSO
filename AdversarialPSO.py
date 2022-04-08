@@ -62,23 +62,23 @@ def logPSOOutput():
         os.mkdir("results/" + str(i))
 
         swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination)
-        baselineConfidence = swarm.calculateBaselineConfidence()
-        baselineLabel = swarm.label
+        baselineConfidence, baselineLabel = swarm.calculateBaselineConfidence()
         print("Searching Optimum Adversarial Example... %s\n" % i)
         swarm.initializeSwarmAndParticles()
         print('Model Prediction Before PSO= %s\n' % baselineLabel)
         print('Baseline Confidence= %s\n' % (str(baselineConfidence)))
         _, _, iterations, numberOfQueries = swarm.searchOptimum()
-        modelConfidence = swarm.bestProba  # could be baselineFitness - best fitness
-        print('Model Confidence After PSO= %s' % modelConfidence)
+
+        print('Model Prediction After PSO= %s' % swarm.label)  # later change 1= benign, 2 = mal
+        print('Model Confidence After PSO= %s' % swarm.bestProba)
         print('Best Fitness Score= %s' % swarm.bestFitness)
         numberOfChanges = sum([int(pos) for pos in swarm.bestPosition[0:16]])
-        print('Model Prediction After PSO= %s' % (str(swarm.label)))  # later change 1= benign, 2 = mal
+
         print('Required number of changes (L1)= %s' % numberOfChanges)
         with open('Malware_Samples_PSO_Results.csv', 'a') as f:
             f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % (
                 samplePath, str(baselineConfidence),
-                str(1 - baselineConfidence), str(swarm.baseLabel), str(modelConfidence),
+                str(1 - baselineConfidence), str(swarm.baseLabel), str(swarm.bestProba),
                 str(swarm.bestFitness), str(swarm.label), str(iterations), str(numberOfChanges), str(numberOfQueries)))
 
 
