@@ -163,7 +163,7 @@ class Swarm:
         # print("Gen sample script...")
         # To compound the files, switch out str(self.apkFile) in first arg, to p.pathToAPK.
         cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + \
-              " /root/Automation/All500Samples/ " + str(p.particleID) + " " + str(self.apkFile)
+              " /root/Automation/MalSamples74_500/ " + str(p.particleID) + " " + str(self.apkFile)
         # print("\t\'" + str(cmd) + "\'")
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 
