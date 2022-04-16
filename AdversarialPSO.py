@@ -51,7 +51,7 @@ def logPSOOutput():
         samples = [inputSample]
     with open('Malware_Samples_PSO_Results.csv', 'w') as f:
         f.write(
-            'Sample,BaselineCofidence,BaselineFitness,Prediction_Before_PSO, Confidence_After_PSO,Fitness_After_PSO,'
+            'Sample,BaselineConfidence,BaselineFitness,Prediction_Before_PSO, Confidence_After_PSO,Fitness_After_PSO,'
             'Prediction_After_PSO,Iteration,Number_of_Required_Changes,Best_Position, Number_Of_Queries\n')
 
     os.mkdir("results")
