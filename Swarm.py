@@ -23,7 +23,7 @@ class Swarm:
         maxQueries = number of stages of PSO we want to accomplish
         x = FilePath
         C1 = constant that controls exploration
-        C2 = constant that controls explotiation
+        C2 = constant that controls exploitation
         e = terminating condition (in our case, it will be the num of iterations w/o improvement)
         """
         # The fields the python linting gods demand we have
@@ -68,26 +68,26 @@ class Swarm:
         self.bestProba = conf                       # This changes
         return conf, pred
 
-    def initializeSwarmAndParticles(self):
+    def initializeSwarmAndParticles(self, inputDir):
         """
         Does what it says on the box.
         """
         print('Initializing Swarm and Particles...\n')
         self.initializeSwarm()
-        self.initializeParticles()
+        self.initializeParticles(inputDir)
 
     def initializeSwarm(self):
         """
-        Sets up the swarm with our most basic assumptions. Establish how much the particles change, set the intiial
+        Sets up the swarm with our most basic assumptions. Establish how much the particles change, set the initial
         flag that would stop the process to off (flicks to on if enough iterations go by with no change), establishes
         a baseline best position of [no change] and similarly for the fitness score.
         """
-        self.changeRate = 3.0/16.0  # Chances, each iter, 3 obfuscators out of the 17 present
+        self.changeRate = 3.0/16.0  # Chances, each iter, 3 obfuscators out of the 16 present
         self.flag = False           # Tells us if there is no change after n number of iterations
         self.bestPosition = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.setBestFitnessScore(0)
 
-    def initializeParticles(self):
+    def initializeParticles(self, inputDir):
         particleList = []
         for x in range(self.numberOfParticles):
             # Set up the initial particle
@@ -95,25 +95,25 @@ class Swarm:
             p.setW()
             p.currentVelocity = {}
             p.pathToAPK = deepcopy(self.apkFile)
-            self.randomizeParticle(p, p.currentPosition)
+            self.randomizeParticle(p, p.currentPosition, inputDir)
 
             p.particleDistanceArr.extend(p.currentVelocity)
             particleList.append(deepcopy(p))
         self.particles = deepcopy(particleList)
 
-    def randomizeParticle(self, p, basePosition):
+    def randomizeParticle(self, p, basePosition, inputDir):
         """
         Randomly selects obfuscators based on the velocity, applies them to a file, and returns the modified filename
         of the apk after it was modified.
         """
         p.currentVelocity = [np.random.uniform(0.0, 1.0) for i in range(16)]  # Randomize init particle
         p.currentPosition = [1 if p.currentVelocity[i] <= self.changeRate else 0 for i in range(16)]
-        self.check(p)
+        self.check(p, inputDir)
 
         p.pastPositions.append(p.currentPosition)
         return True
 
-    def searchOptimum(self):
+    def searchOptimum(self, inputDir):
 
         # If its not malicious then exit
         if self.label != 2:
@@ -128,7 +128,7 @@ class Swarm:
             # Get the next position, and check / update those positions while adding them to the historical record
             for p in self.particles:
                 p.calculateNextPosition(self.bestPosition, self.numberOfQueries, self.C1, self.C2, self.maxQueries)
-                self.check(p)
+                self.check(p, inputDir)
             self.pastFitness.append(self.bestFitness)
             posString = ""
 
@@ -139,8 +139,8 @@ class Swarm:
             print('++ Iteration %s - Best Fitness %s - Best Position %s - Confidence %s - Number of Queries %s' % (
                 str(iteration), str(self.bestFitness), posString, self.bestProba, self.numberOfQueries))
 
-            if self.earlyTermination > 0 and len(self.pastFitness[(-1*self.earlyTermination):]) >= self.earlyTermination\
-                    and len(set(self.pastFitness[(-1*self.earlyTermination):])) == 1:
+            if self.earlyTermination > 0 and len(self.pastFitness[(-1*self.earlyTermination):]) >= \
+                    self.earlyTermination and len(set(self.pastFitness[(-1*self.earlyTermination):])) == 1:
                 return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
 
             if self.label != 2:
@@ -150,7 +150,7 @@ class Swarm:
         print("== Number of Queries: %s" % self.numberOfQueries)
         return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
 
-    def check(self, p):
+    def check(self, p, inputDir):
         """
         p is our particle
         new position is current position
@@ -163,7 +163,7 @@ class Swarm:
         # print("Gen sample script...")
         # To compound the files, switch out str(self.apkFile) in first arg, to p.pathToAPK.
         cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + \
-              " /root/Automation/MalSamples74_500/ " + str(p.particleID) + " " + str(self.apkFile)
+              " "+inputDir+" " + str(p.particleID) + " " + str(self.apkFile)
         # print("\t\'" + str(cmd) + "\'")
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 
@@ -212,4 +212,4 @@ class Swarm:
         else:
             # This means that the obfuscation process made things bad
             # Randomize the particle, try it again.
-            self.randomizeParticle(p, p.currentPosition)
+            self.randomizeParticle(p, p.currentPosition, inputDir)

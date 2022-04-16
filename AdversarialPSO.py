@@ -47,13 +47,12 @@ def logPSOOutput():
             for f in fileNames:
                 samples.append(os.path.abspath(os.path.join(dirPath, f)))
 
-        # samples = os.listdir(inputDir)
     else:
         samples = [inputSample]
     with open('Malware_Samples_PSO_Results.csv', 'w') as f:
         f.write(
             'Sample,BaselineCofidence,BaselineFitness,Prediction_Before_PSO, Confidence_After_PSO,Fitness_After_PSO,'
-            'Prediction_After_PSO,Iteration,Number_of_Required_Changes,Number_Of_Queries\n')
+            'Prediction_After_PSO,Iteration,Number_of_Required_Changes,Best_Position, Number_Of_Queries\n')
 
     os.mkdir("results")
     for i, samplePath in enumerate(samples):
@@ -64,22 +63,27 @@ def logPSOOutput():
         swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination)
         baselineConfidence, baselineLabel = swarm.calculateBaselineConfidence()
         print("Searching Optimum Adversarial Example... %s\n" % i)
-        swarm.initializeSwarmAndParticles()
+        swarm.initializeSwarmAndParticles(inputDir)
         print('Model Prediction Before PSO= %s\n' % baselineLabel)
         print('Baseline Confidence= %s\n' % (str(baselineConfidence)))
-        _, _, iterations, numberOfQueries = swarm.searchOptimum()
+        _, _, iterations, numberOfQueries = swarm.searchOptimum(inputDir)
 
         print('Model Prediction After PSO= %s' % swarm.label)  # later change 1= benign, 2 = mal
         print('Model Confidence After PSO= %s' % swarm.bestProba)
         print('Best Fitness Score= %s' % swarm.bestFitness)
         numberOfChanges = sum([int(pos) for pos in swarm.bestPosition[0:16]])
 
+        posString = ""
+        for e in swarm.bestPosition:
+            posString += str(e)
+
         print('Required number of changes (L1)= %s' % numberOfChanges)
         with open('Malware_Samples_PSO_Results.csv', 'a') as f:
-            f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % (
+            f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % (
                 samplePath, str(baselineConfidence),
                 str(1 - baselineConfidence), str(swarm.baseLabel), str(swarm.bestProba),
-                str(swarm.bestFitness), str(swarm.label), str(iterations), str(numberOfChanges), str(numberOfQueries)))
+                str(swarm.bestFitness), str(swarm.label), str(iterations), str(numberOfChanges), posString,
+                str(numberOfQueries)))
 
 
 if __name__ == "__main__":
