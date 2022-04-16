@@ -8,7 +8,7 @@ def sigmoid(x):
 
 def get_probs(x):
     """
-    Gets the confidence array of a given file without obfsucation. Baseline fitness
+    Gets the confidence array of a given file without obfuscation. Baseline fitness
 
     Parameters
     ----------
@@ -16,7 +16,7 @@ def get_probs(x):
 
     Returns
     -------
-    An array in the form [prediction, confidnece]
+    An array in the form [prediction, confidence]
 
     """
     # Terminating condition for a successful attack, prediction = 1

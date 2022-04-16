@@ -57,7 +57,7 @@ class particle:
 
         for i, x in enumerate(particleCurrentPosition):  # 16 long char array of 0s and 1s
             # i = index, x = value
-            # If either of these arent the same, move in that direction. If they are the best, stay.
+            # If either of these aren't the same, move in that direction. If they are the best, stay.
             # maintain 2 lists, currentPosition, and the second one which will have distances
             exploration = C1*np.random.uniform(0.0, 1.0) * abs(swarmBestPosition[i] - particleCurrentPosition[i])
 
