@@ -3,7 +3,6 @@ import sys
 import os
 
 from Swarm import Swarm
-from Utilities import get_probs
 
 # Define arguments
 parser = argparse.ArgumentParser(
