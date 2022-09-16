@@ -1,7 +1,7 @@
 import os.path
 
 from particle import particle
-from Utilities import fitnessScore, get_probs
+
 import numpy as np
 from copy import deepcopy
 import random
