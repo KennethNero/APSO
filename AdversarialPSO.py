@@ -14,6 +14,16 @@ parser.add_argument("-d", "--debug", action="store_true", help="print debug info
 parser.add_argument("-p", "--numOfParticles", help="Number of particles in the swarm", default=10, type=int)
 parser.add_argument("-q", "--maxQueries", help="Maximum number of allowed queries", default=20000, type=int)
 parser.add_argument("-r", "--randomMutation", help="Probability of random mutation", default=0.1, type=float)
+parser.add_argument("-m", "--model", help="The type of model to use in the defense", default="adv_training_dnn",
+                    type=str,
+                    choices=['atrfgsm',     # hardened DNN incorporating adversarial training with r-fgsm
+                             'atadam',      # hardened DNN incorporating adversarial training with adam
+                             'atma',        # hardened DNN incorporating adversarial training with a mixture of attacks
+                             'adema'  # ,
+                             # hardened ensemble-based DNN incorporating adversarial training with a mixture of attacks
+                             # 'dadema'       # promoting the diversity of adversarial deep ensemble
+                             ],
+                    required=False)
 parser.add_argument("-e", "--earlyTermination",
                     help="Number of iterations of unchanged fitness before terminating search process. Set to -1 to "
                          "disable",
@@ -35,6 +45,7 @@ numOfParticles = args.numOfParticles
 maxQueries = args.maxQueries
 randomMutations = args.randomMutation
 earlyTermination = args.earlyTermination
+defModel = args.model
 C1 = 1
 C2 = 1
 
@@ -59,7 +70,7 @@ def logPSOOutput():
 
         os.mkdir("results/" + str(i))
 
-        swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination)
+        swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination, defModel)
         baselineConfidence, baselineLabel = swarm.calculateBaselineConfidence()
         print("Searching Optimum Adversarial Example... %s\n" % i)
         swarm.initializeSwarmAndParticles(inputDir)
