@@ -6,6 +6,7 @@ import numpy as np
 from copy import deepcopy
 import random
 import subprocess
+from common import Defender
 
 random.seed(0)
 np.random.seed(0)
@@ -13,7 +14,7 @@ np.random.seed(0)
 
 class Swarm:
 
-    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e):
+    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e, defenseModel="adv_training"):
         """
 
         Parameters
@@ -47,6 +48,8 @@ class Swarm:
         self.earlyTermination = e
         self.C1 = C1
         self.C2 = C2
+        self.targetModel = Defender(defenseModel)
+
 
     def setBestPosition(self, newPosition):
         self.bestPosition = deepcopy(newPosition)
@@ -54,12 +57,54 @@ class Swarm:
     def setBestFitnessScore(self, newScore):
         self.bestFitness = newScore
 
+    def getProbs(self):
+        """
+        Gets the confidence array of a given file without obfuscation. Baseline fitness
+
+        Parameters
+        ----------
+        A filename to pass in - our.apk
+
+        Returns
+        -------
+        An array in the form [prediction, confidence]
+
+        """
+
+        # Propagates the defender object with the assumption that the model passed in, is malicious.
+        # Dumps out 'y_pred' which should be the models confidence that it is malicious.
+        mal_conf = self.targetModel.predict(self.apkFile, 1)  #TODO: Double check that 1 is malicious.
+
+        # # Terminating condition for a successful attack, prediction = 1
+        # # As the attack progresses, focus on label 2
+        # # print("Single_dan_test with "+str(x)+"::")
+        # cmd = "sudo bash /root/Automation/single_dan_test.sh " + str(x) + " /root/Automation/init_test/ 0"
+        # # print("\t\'"+str(cmd)+"\'")
+        # proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        # out, err = proc.communicate()
+        # conf = out.split()[-1]  # Make sure this works
+        # label = out.split()[-2]
+
+        # print("\t\tDEBUG:: get_probs - out = '"+str(out)+"'")
+
+        return [int(1 if mal_conf > .5 else 0), float(mal_conf)]
+        # return [int(label), float(conf)]
+
+
+    def fitnessScore(self):
+        # Takes in APK and baseline confidence.
+        label, conf = self.getProbs()
+        fitness = self.baselineConfidence - conf
+        return fitness, conf, label
+
+
     def calculateBaselineConfidence(self):
         """
         Establishes baseline confidence and best probability based on assessment of the input file through a dry run
         of the ML model.
         """
-        pred, conf = get_probs(self.apkFile)        # Get the confidence f
+        pred, conf = get_probs(self.apkFile, self.targetModel)        # Get the confidence f
+        pred, conf = self.getProbs()
 
         self.baseLabel = pred                       # This is base
         self.label = pred                           # This changes
@@ -179,7 +224,7 @@ class Swarm:
             p.pathToAPK = newAPKPath
 
             # Run the assessment script on this path - get the confidence / label
-            newFitness, newProba, newLabel = fitnessScore(p.pathToAPK, self.baselineConfidence)
+            newFitness, newProba, newLabel = self.fitnessScore()
             os.remove(newAPKPath)
 
             # Increment metrics
