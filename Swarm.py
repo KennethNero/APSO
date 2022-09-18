@@ -6,7 +6,7 @@ import numpy as np
 from copy import deepcopy
 import random
 import subprocess
-from adv_dnn_ens_malware.common import Defender
+from common import Defender
 
 random.seed(0)
 np.random.seed(0)
