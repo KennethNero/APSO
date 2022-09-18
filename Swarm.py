@@ -103,8 +103,7 @@ class Swarm:
         Establishes baseline confidence and best probability based on assessment of the input file through a dry run
         of the ML model.
         """
-        pred, conf = self.get_probs(self.apkFile, self.targetModel)        # Get the confidence f
-       # pred, conf = self.getProbs()
+        pred, conf = self.getProbs()        # Get the confidence f
 
         self.baseLabel = pred                       # This is base
         self.label = pred                           # This changes
