@@ -67,8 +67,8 @@ def logPSOOutput():
         os.mkdir("results")
     for i, samplePath in enumerate(samples):
         print("Handling... " + str(samplePath))
-
-        os.mkdir("results/" + str(i))
+        if not os.path.exists("results/" + str(i)):
+            os.mkdir("results/" + str(i))
 
         swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination, defModel)
         baselineConfidence, baselineLabel = swarm.calculateBaselineConfidence()
