@@ -63,8 +63,8 @@ def logPSOOutput():
         f.write(
             'Sample,BaselineConfidence,BaselineFitness,Prediction_Before_PSO, Confidence_After_PSO,Fitness_After_PSO,'
             'Prediction_After_PSO,Iteration,Number_of_Required_Changes,Best_Position, Number_Of_Queries\n')
-
-    os.mkdir("results")
+    if not os.path.exists("results"):
+        os.mkdir("results")
     for i, samplePath in enumerate(samples):
         print("Handling... " + str(samplePath))
 
