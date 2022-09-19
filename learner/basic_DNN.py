@@ -525,7 +525,7 @@ class BasicDNNModel(Classifier):
             #     print("Other evaluation metrics we may need:")
             #     MSG = "False Negative Rate (FNR) is {:.5f}%, False Positive Rate (FPR) is {:.5f}%, F1 score is {:.5f}%"
             #     print(MSG.format(fnr * 100, fpr * 100, f1 * 100))
-            # sess.close()
+            sess.close()
         return y_pred
 
     def test(self, apks, gt_labels, is_single_class=False, is_save_feat=True):
