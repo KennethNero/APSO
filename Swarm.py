@@ -206,9 +206,8 @@ class Swarm:
             obf_string += str(e)
         # print("Gen sample script...")
         # To compound the files, switch out str(self.apkFile) in first arg, to p.pathToAPK.
-        from IPython import embed
-        embed()
-        cmd = "sudo bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + \
+
+        cmd = "bash /root/Automation/gen_sample.sh " + str(self.apkFile) + " " + obf_string + \
               " "+inputDir+" " + str(p.particleID) + " " + str(self.apkFile)
         # print("\t\'" + str(cmd) + "\'")
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
