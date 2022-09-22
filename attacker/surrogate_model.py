@@ -10,7 +10,7 @@ from timeit import default_timer
 import numpy as np
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
-
+tf.get_logger().setLevel('ERROR')
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from config import config, logging
 

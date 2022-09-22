@@ -3,6 +3,7 @@ import sys
 import warnings
 
 import tensorflow as tf
+tf.get_logger().setLevel('ERROR')
 import numpy as np
 from collections import defaultdict
 

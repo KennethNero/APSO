@@ -8,6 +8,7 @@ import os
 import sys
 
 import tensorflow as tf
+tf.get_logger().setLevel('ERROR')
 import numpy as np
 
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))

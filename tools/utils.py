@@ -11,6 +11,7 @@ import math
 
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
+tf.get_logger().setLevel('ERROR')
 import numpy as np
 flags = tf.flags
 FLAGS = flags.FLAGS

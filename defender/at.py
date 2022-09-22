@@ -9,6 +9,7 @@ from timeit import default_timer
 import warnings
 
 import tensorflow as tf
+tf.get_logger().setLevel('ERROR')
 import numpy as np
 from sklearn.metrics import f1_score
 

@@ -4,7 +4,7 @@ The reason is the TF adam optimizer may have some issues. Please look the 'Unrol
 """
 
 import tensorflow as tf
-
+tf.get_logger().setLevel('ERROR')
 class TensorOptimizer(object):
     """Functional-stype optimizer which does not use TF Variables.
     UnrolledOptimizers implement optimizers where the values being optimized
