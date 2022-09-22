@@ -37,10 +37,10 @@ obf_arr=("AdvancedReflection" "ArithmeticBranch" "AssetEncryption" "CallIndirect
 "MethodRename" "Nop" "Reflection" "Reorder" "ResStringEncryption" "RandomManifest") 
  
 # Make sure we're where we need to be 
-cd "/root/Downloads/Obfuscapk/src/" 
+cd "/usr/local/Obfuscapk/src/obfuscapk/" 
  
 # Begin the string construction 
-cmd="python3 -m obfuscapk.cli -w tmp -d $out_fldr$out_apk " 
+cmd="python3 -m cli.py -w tmp -d $out_fldr$out_apk " 
  
 # Loop through the in_arr, append the things 
 for (( i=0; i<${#in_arr}; i++ )); do 
