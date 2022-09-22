@@ -253,8 +253,7 @@ class Swarm:
                 self.setBestFitnessScore(p.bestFitness)
                 self.label = newLabel
                 self.setBestPosition(p.bestPosition)
-            from IPython import embed
-            embed()
+
             
             
         else:
