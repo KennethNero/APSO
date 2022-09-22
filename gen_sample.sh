@@ -40,7 +40,7 @@ obf_arr=("AdvancedReflection" "ArithmeticBranch" "AssetEncryption" "CallIndirect
 cd "/usr/local/Obfuscapk/src/" 
  
 # Begin the string construction 
-cmd="python3 -m obfuscapk.cli -w tmp -d $out_fldr$out_apk " 
+cmd="python3 -m obfuscapk.cli -w /data/yin-group/models/adv-dnn-ens/workingModel/APSO/obfuscapk_tmp -d $out_fldr$out_apk " 
  
 # Loop through the in_arr, append the things 
 for (( i=0; i<${#in_arr}; i++ )); do 
