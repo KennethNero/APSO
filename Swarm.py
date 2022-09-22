@@ -253,7 +253,10 @@ class Swarm:
                 self.setBestFitnessScore(p.bestFitness)
                 self.label = newLabel
                 self.setBestPosition(p.bestPosition)
-
+            from IPython import embed
+            embed()
+            
+            
         else:
             # This means that the obfuscation process made things bad
             # Randomize the particle, try it again.
