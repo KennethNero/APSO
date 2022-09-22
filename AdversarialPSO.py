@@ -15,7 +15,7 @@ parser.add_argument("-d", "--debug", action="store_true", help="print debug info
 parser.add_argument("-p", "--numOfParticles", help="Number of particles in the swarm", default=10, type=int)
 parser.add_argument("-q", "--maxQueries", help="Maximum number of allowed queries", default=20000, type=int)
 parser.add_argument("-r", "--randomMutation", help="Probability of random mutation", default=0.1, type=float)
-parser.add_argument("-m", "--model", help="The type of model to use in the defense", default="adv_training_dnn",
+parser.add_argument("-m", "--model", help="The type of model to use in the defense", default="basic_dnn",
                     type=str,
                     choices=['atrfgsm',     # hardened DNN incorporating adversarial training with r-fgsm
                              'atadam',      # hardened DNN incorporating adversarial training with adam

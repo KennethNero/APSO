@@ -2,7 +2,7 @@
 from abc import ABCMeta, abstractmethod
 
 import tensorflow as tf
-
+tf.get_logger().setLevel('ERROR')
 
 class Classifier(object):
     """Abstract base class for all classifier classes."""
