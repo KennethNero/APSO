@@ -35,7 +35,7 @@ class Swarm:
         # The actual fields we need RIGHT NOW
         self.particles = []
         self.baseLabel = None
-        self.label = 2
+        self.label = 1
         self.numberOfParticles = numOfParticles
         self.bestFitness = 0
         self.dLength = 2 ** 16  # 2 choices, 16 dimensions
@@ -160,13 +160,13 @@ class Swarm:
     def searchOptimum(self, inputDir):
 
         # If its not malicious then exit
-        if self.label != 2:
+        if self.label != 1:
             return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
         iteration = 1
 
         # While we have queries left and are still malicious
         while self.numberOfQueries < self.maxQueries:
-            if self.label != 2:
+            if self.label != 1:
                 return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
 
             # Get the next position, and check / update those positions while adding them to the historical record
@@ -187,7 +187,7 @@ class Swarm:
                     self.earlyTermination and len(set(self.pastFitness[(-1*self.earlyTermination):])) == 1:
                 return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
 
-            if self.label != 2:
+            if self.label != 1:
                 return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
             iteration = iteration + 1
 
