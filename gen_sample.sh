@@ -6,8 +6,7 @@ in_apk="$1"    # Full path to APK to mod
 in_arr="$2"    # A 16 char string of 0s and 1s 
 out_fldr="$3"    # The folder the out file goes into (has a / at the end) 
 in_appnd="$4"    # Prefix to be appended to output file 
-org_apk="$5"    # The ORIGINAL path to the APK being modded. Used for 
-output generation 
+org_apk="$5"    # The ORIGINAL path to the APK being modded. Used for output generation 
  
 # If there are at least 3 underscores AND Particle in the name AND [0] is a case of 0 or 1 
 # split at the third underscore 
