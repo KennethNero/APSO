@@ -37,7 +37,7 @@ obf_arr=("AdvancedReflection" "ArithmeticBranch" "AssetEncryption" "CallIndirect
 "MethodRename" "Nop" "Reflection" "Reorder" "ResStringEncryption" "RandomManifest") 
  
 # Make sure we're where we need to be 
-cd "/usr/local/Obfuscapk/src/obfuscapk/" 
+cd "/usr/local/Obfuscapk/src/" 
  
 # Begin the string construction 
 cmd="python3 -m obfuscapk.cli -w tmp -d $out_fldr$out_apk " 
