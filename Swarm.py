@@ -14,7 +14,7 @@ np.random.seed(0)
 
 class Swarm:
 
-    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e, defenseModel="adv_training"):
+    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e, defenseModel):
         """
 
         Parameters
@@ -48,7 +48,7 @@ class Swarm:
         self.earlyTermination = e
         self.C1 = C1
         self.C2 = C2
-        self.targetModel = Defender(defenseModel)
+        self.targetModel = defenseModel
 
 
     def setBestPosition(self, newPosition):

@@ -3,6 +3,7 @@ import sys
 import os
 
 from Swarm import Swarm
+from common import Defender
 
 # Define arguments
 parser = argparse.ArgumentParser(
@@ -51,6 +52,7 @@ C2 = 1
 
 
 def logPSOOutput():
+    model=Defender(defModel)
     if inputDir is not None:
         samples = []
         for dirPath, _, fileNames in os.walk(inputDir):
@@ -70,7 +72,7 @@ def logPSOOutput():
         if not os.path.exists("results/" + str(i)):
             os.mkdir("results/" + str(i))
 
-        swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination, defModel)
+        swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination, model)
         baselineConfidence, baselineLabel = swarm.calculateBaselineConfidence()
         print("Searching Optimum Adversarial Example... %s\n" % i)
         swarm.initializeSwarmAndParticles(inputDir)
