@@ -3,7 +3,7 @@ import sys
 import os
 
 from Swarm import Swarm
-from common import Defender
+from common import Defender,Learner
 
 # Define arguments
 parser = argparse.ArgumentParser(
@@ -52,7 +52,10 @@ C2 = 1
 
 
 def logPSOOutput():
-    model=Defender(defModel)
+    if defModel=="basic_dnn":
+        model=Learner()
+    else:
+        model=Defender(defModel)
     if inputDir is not None:
         samples = []
         for dirPath, _, fileNames in os.walk(inputDir):
