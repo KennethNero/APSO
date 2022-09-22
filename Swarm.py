@@ -73,7 +73,7 @@ class Swarm:
 
         # Propagates the defender object with the assumption that the model passed in, is malicious.
         # Dumps out 'y_pred' which should be the models confidence that it is malicious.
-        mal_conf = self.targetModel.defense.test([self.apkFile], [1])  #TODO: Double check that 1 is malicious.
+        mal_conf = self.targetModel.predict([self.apkFile], [1])  #TODO: Double check that 1 is malicious.
 
         # # Terminating condition for a successful attack, prediction = 1
         # # As the attack progresses, focus on label 2
