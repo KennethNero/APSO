@@ -226,7 +226,7 @@ class Swarm:
 
             # Run the assessment script on this path - get the confidence / label
             newFitness, newProba, newLabel = self.fitnessScore(p.pathToAPK)
-            
+            os.remove(newAPKPath)
 
             # Increment metrics
             self.numberOfQueries = self.numberOfQueries + 1
@@ -254,9 +254,6 @@ class Swarm:
                 self.setBestFitnessScore(p.bestFitness)
                 self.label = newLabel
                 self.setBestPosition(p.bestPosition)
-                self.apkFile=newAPKPath
-            else:
-                os.remove(newAPKPath)
 
             
             
