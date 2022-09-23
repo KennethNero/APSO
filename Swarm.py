@@ -224,7 +224,7 @@ class Swarm:
             p.pathToAPK = newAPKPath
 
             # Run the assessment script on this path - get the confidence / label
-            newFitness, newProba, newLabel = self.fitnessScore(p.pathToAPK())
+            newFitness, newProba, newLabel = self.fitnessScore(p.pathToAPK)
             os.remove(newAPKPath)
 
             # Increment metrics
