@@ -27,9 +27,9 @@ class Learner(object):
     def predict(self, apks=None, gt_lables=None):
         self.model.mode = 'test'
         if apks is None and gt_lables is None:
-            self.model.test_rpst()
+            return self.model.test_rpst()
         else:
-            self.model.test(apks, gt_lables)
+            return self.model.test(apks, gt_lables)
 
     def pred_adv(self):
         from config import config
