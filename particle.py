@@ -59,9 +59,9 @@ class particle:
             # i = index, x = value
             # If either of these aren't the same, move in that direction. If they are the best, stay.
             # maintain 2 lists, currentPosition, and the second one which will have distances
-            exploration = C1*np.random.uniform(0.0, 1.0) * abs(swarmBestPosition[i] - particleCurrentPosition[i])
+            exploration = C1*np.random.uniform(0.0, 1.0) * (swarmBestPosition[i] - particleCurrentPosition[i])
 
-            exploitation = C2*np.random.uniform(0.0, 1.0) * abs(particleBestPosition[i] - particleCurrentPosition[i])
+            exploitation = C2*np.random.uniform(0.0, 1.0) * (particleBestPosition[i] - particleCurrentPosition[i])
 
             inertia = self.currentVelocity[i] * self.W
 
