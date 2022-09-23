@@ -73,6 +73,8 @@ class Swarm:
 
         # Propagates the defender object with the assumption that the model passed in, is malicious.
         # Dumps out 'y_pred' which should be the models confidence that it is malicious.
+        from IPython import embed
+        embed()
         mal_conf = self.targetModel.predict([apk], [1])  #TODO: Double check that 1 is malicious.
 
         # # Terminating condition for a successful attack, prediction = 1
