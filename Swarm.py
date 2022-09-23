@@ -57,7 +57,7 @@ class Swarm:
     def setBestFitnessScore(self, newScore):
         self.bestFitness = newScore
 
-    def getProbs(self):
+    def getProbs(self,apk):
         """
         Gets the confidence array of a given file without obfuscation. Baseline fitness
 
@@ -73,7 +73,7 @@ class Swarm:
 
         # Propagates the defender object with the assumption that the model passed in, is malicious.
         # Dumps out 'y_pred' which should be the models confidence that it is malicious.
-        mal_conf = self.targetModel.predict([self.apkFile], [1])  #TODO: Double check that 1 is malicious.
+        mal_conf = self.targetModel.predict([apk], [1])  #TODO: Double check that 1 is malicious.
 
         # # Terminating condition for a successful attack, prediction = 1
         # # As the attack progresses, focus on label 2
@@ -91,9 +91,9 @@ class Swarm:
         # return [int(label), float(conf)]
 
 
-    def fitnessScore(self):
+    def fitnessScore(self,apk):
         # Takes in APK and baseline confidence.
-        label, conf = self.getProbs()
+        label, conf = self.getProbs(apk)
         fitness = self.baselineConfidence - conf
         return fitness, conf, label
 
@@ -103,7 +103,7 @@ class Swarm:
         Establishes baseline confidence and best probability based on assessment of the input file through a dry run
         of the ML model.
         """
-        pred, conf = self.getProbs()        # Get the confidence f
+        pred, conf = self.getProbs(self.apkFile)        # Get the confidence f
 
         self.baseLabel = pred                       # This is base
         self.label = pred                           # This changes
@@ -224,7 +224,7 @@ class Swarm:
             p.pathToAPK = newAPKPath
 
             # Run the assessment script on this path - get the confidence / label
-            newFitness, newProba, newLabel = self.fitnessScore()
+            newFitness, newProba, newLabel = self.fitnessScore(p.pathToAPK())
             os.remove(newAPKPath)
 
             # Increment metrics
