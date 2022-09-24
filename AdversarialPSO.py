@@ -11,10 +11,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument("-i", "--input", help="Input directory", default=None)
 parser.add_argument("-s", "--sample", help="Single input file", default=None)
 parser.add_argument("-o", "--output", help="Output directory", default=None)
+parser.add_argument("-c", "--converge", help="Enables node convergence to best swarm state", default=False)
 parser.add_argument("-d", "--debug", action="store_true", help="print debug information", default=False)
 parser.add_argument("-p", "--numOfParticles", help="Number of particles in the swarm", default=10, type=int)
 parser.add_argument("-q", "--maxQueries", help="Maximum number of allowed queries", default=20000, type=int)
 parser.add_argument("-r", "--randomMutation", help="Probability of random mutation", default=0.1, type=float)
+parser.add_argument("-u", "--use_reflection", help="Enables use of reflection & adv reflection obfuscation",
+                    default=False)
 parser.add_argument("-m", "--model", help="The type of model to use in the defense", default="basic_dnn",
                     type=str,
                     choices=['basic_dnn',
@@ -48,6 +51,8 @@ maxQueries = args.maxQueries
 randomMutations = args.randomMutation
 earlyTermination = args.earlyTermination
 defModel = args.model
+converge = args.converge
+danger = args.use_reflection
 C1 = 1
 C2 = 1
 
@@ -76,7 +81,8 @@ def logPSOOutput():
         if not os.path.exists("results/" + str(i)):
             os.mkdir("results/" + str(i))
 
-        swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination, model)
+        swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination, model,
+                      converge, danger)
         baselineConfidence, baselineLabel = swarm.calculateBaselineConfidence()
         print("Searching Optimum Adversarial Example... %s\n" % i)
         swarm.initializeSwarmAndParticles(inputDir)

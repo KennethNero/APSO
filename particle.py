@@ -23,6 +23,8 @@ class particle:
         self.currentVelocity = None
         self.pathToAPK = None           # One that its testing 0001110001_......apk
         self.currentFitness = 0
+        self.useOfAdvRef = False        # flags for use of dangerous obfuscators (they break things)
+        self.useOfRef = False
 
     def setNextPosition(self, newPosition):
         self.nextPosition = deepcopy(newPosition)

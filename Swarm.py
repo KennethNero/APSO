@@ -14,7 +14,7 @@ np.random.seed(0)
 
 class Swarm:
 
-    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e, defenseModel):
+    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e, defenseModel, converge, danger):
         """
 
         Parameters
@@ -49,6 +49,10 @@ class Swarm:
         self.C1 = C1
         self.C2 = C2
         self.targetModel = defenseModel
+        self.converge = converge
+        self.useOfAdvRef = False        # flags for use of dangerous obfuscators (they break things)
+        self.useOfRef = False
+        self.useDanger = danger
 
 
     def setBestPosition(self, newPosition):
@@ -57,7 +61,7 @@ class Swarm:
     def setBestFitnessScore(self, newScore):
         self.bestFitness = newScore
 
-    def getProbs(self,apk):
+    def getProbs(self, apk):
         """
         Gets the confidence array of a given file without obfuscation. Baseline fitness
 
@@ -74,7 +78,7 @@ class Swarm:
         # Propagates the defender object with the assumption that the model passed in, is malicious.
         # Dumps out 'y_pred' which should be the models confidence that it is malicious.
 
-        mal_conf = self.targetModel.predict([apk], [1])  #TODO: Double check that 1 is malicious.
+        mal_conf = self.targetModel.predict([apk], [1])
 
         # # Terminating condition for a successful attack, prediction = 1
         # # As the attack progresses, focus on label 2
@@ -208,6 +212,27 @@ class Swarm:
         # print("Gen sample script...")
         # To compound the files, switch out str(self.apkFile) in first arg, to p.pathToAPK.
 
+        # adv ref = 0, Ref = 12
+
+        # TODO: Check obfuscation string, if the first 2 bits are equal to 1, set flag to true . If true, set them to 0
+
+        if not self.useDanger:
+            obf_string = "0" + obf_string[1:12] + "0" + obf_string[13:]    # All ref turned off
+        else:
+            if self.useOfAdvRef:
+                if obf_string[0] == '1':                # Indicates adv ref is on
+                    obf_string = "0" + obf_string[1:]   # remove adv reflection from being possible
+            if self.useOfRef:
+                if obf_string[12] == '1':
+                    obf_string = obf_string[:12] + "0" + obf_string[13:]
+
+            # Turn on flags forever if we're being dangerous about it.
+            if self.useDanger:
+                if not self.useOfAdvRef and obf_string[0] == "1":
+                    self.useOfAdvRef = True
+                if not self.useOfRef and obf_string[12] == "1":
+                    self.useOfRef = True
+
         cmd = "bash gen_sample.sh " + str(self.apkFile) + " " + obf_string + \
               " "+inputDir+" " + str(p.particleID) + " " + str(self.apkFile)
         # print("\t\'" + str(cmd) + "\'")
@@ -226,7 +251,7 @@ class Swarm:
 
             # Run the assessment script on this path - get the confidence / label
             newFitness, newProba, newLabel = self.fitnessScore(p.pathToAPK)
-            os.remove(newAPKPath)
+            # os.remove(newAPKPath) # removed for converge
 
             # Increment metrics
             self.numberOfQueries = self.numberOfQueries + 1
@@ -250,13 +275,14 @@ class Swarm:
                 p.setBestFitnessScore(newFitness)
                 p.setBestPosition(p.currentPosition)
             if p.bestFitness > self.bestFitness:
+                if self.converge:
+                    self.apkFile = newAPKPath
                 self.bestProba = newProba
                 self.setBestFitnessScore(p.bestFitness)
                 self.label = newLabel
                 self.setBestPosition(p.bestPosition)
-
-            
-            
+            else:
+                os.remove(newAPKPath)   # We don't need it anymore
         else:
             # This means that the obfuscation process made things bad
             # Randomize the particle, try it again.
