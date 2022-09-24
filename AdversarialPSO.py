@@ -3,7 +3,7 @@ import sys
 import os
 
 from Swarm import Swarm
-from common import Defender,Learner
+from common import Defender, Learner
 
 # Define arguments
 parser = argparse.ArgumentParser(
