@@ -4,18 +4,10 @@ The script is for Adversarial training incorporating attacks such as pgdl1, pgdl
 
 import os
 import sys
+import numpy as np
+
 from datetime import datetime
 from timeit import default_timer
-import warnings
-
-import tensorflow as tf
-tf.get_logger().setLevel('ERROR')
-import numpy as np
-from sklearn.metrics import f1_score
-
-proj_dir = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(proj_dir)
-
 from config import config
 from tools import utils
 from learner.basic_DNN import BasicDNNModel, feature_type_scope_dict, graph, INFO, DNN_HP
@@ -23,6 +15,12 @@ from attacker.methods.pgd_adam import PGDAdam
 from attacker.methods.pgdl1 import PGDl1
 from attacker.methods.pgd import PGD
 from attacker.feature_reverser import DrebinFeatureReverse
+
+import tensorflow as tf
+tf.get_logger().setLevel('ERROR')
+
+proj_dir = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(proj_dir)
 
 # generative methods
 MAXIMIZER_METHOD_DICT = {
@@ -78,7 +76,7 @@ class AdversarialTrainingDNN(BasicDNNModel):
 
         if hyper_params is None:
             ADV_TRAIN_HP.update(DNN_HP)
-            hyper_params = ADV_TRAIN_HP # hyper_params contains information of using which attack
+            hyper_params = ADV_TRAIN_HP  # hyper_params contains information of using which attack
         self.hp_params = utils.ParamWrapper(hyper_params)
 
         # initialization
@@ -211,7 +209,7 @@ class AdversarialTrainingDNN(BasicDNNModel):
             rtn_x = tf.concat([mal_x_tensor, ben_x_tensor], axis=0)
             rtn_y = tf.concat([mal_y_tensor, ben_y_tensor], axis=0)
             return adv_x_tensor, rtn_x, rtn_y
-        elif trials >= 1: # random start
+        elif trials >= 1:  # random start
             x_shape = mal_x_tensor.get_shape().as_list()
             mal_x_batch_ext = tf.tile(mal_x_tensor, [trials, 1])
             mal_y_batch_ext = tf.tile(mal_y_tensor, [trials, ])
@@ -268,7 +266,7 @@ class AdversarialTrainingDNN(BasicDNNModel):
             trainX, valX, _ = utils.read_joblib(config.get('feature.' + self.feature_tp, 'dataX'))
             trainy, valy, _ = utils.read_joblib(config.get('feature.' + self.feature_tp, 'datay'))
 
-        train_input = utils.DataProducer(trainX, trainy,self.hp_params.batch_size, n_epochs=self.hp_params.n_epochs)
+        train_input = utils.DataProducer(trainX, trainy, self.hp_params.batch_size, n_epochs=self.hp_params.n_epochs)
         val_input = utils.DataProducer(valX, valy, self.hp_params.batch_size, name='val')
 
         # perturb the malware representations
@@ -314,7 +312,7 @@ class AdversarialTrainingDNN(BasicDNNModel):
                     val_input.reset_cursor()
                     val_res_list = [sess.run([self.accuracy, self.y_pred], feed_dict={self.x_input: valX_batch,
                                                                                       self.y_input: valy_batch,
-                                                                                      self.is_training: False}) \
+                                                                                      self.is_training: False})
                                     for [_, valX_batch, valy_batch] in val_input.next_batch()
                                     ]
                     val_res = np.array(val_res_list, dtype=object)

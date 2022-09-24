@@ -5,30 +5,27 @@ we consider the ''max'' attack, including pgd-l1, pgd-l2, pgd-linf, pgd-adam
 
 import os
 import sys
+import numpy as np
+
 from datetime import datetime
 from timeit import default_timer
-import random
-
-import tensorflow as tf
-tf.get_logger().setLevel('ERROR')
-import numpy as np
-from sklearn.metrics import f1_score
-
-proj_dir = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(proj_dir)
-
 from config import config
 from tools import utils
-from learner.feature_extractor import get_droid_feature, FeatureMapping, feature_type_scope_dict
+from learner.feature_extractor import feature_type_scope_dict
 from learner.basic_DNN import BasicDNNModel, DNN_HP, INFO
 from attacker.feature_reverser import DrebinFeatureReverse
 from defender.at import MAXIMIZER_PARAM_DICT, MAXIMIZER_METHOD_DICT
 from defender.at_ma import MAX_ADV_TRAIN_HP
 
+import tensorflow as tf
+tf.get_logger().setLevel('ERROR')
+
+proj_dir = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(proj_dir)
 
 ADV_ENS_INFO = {
     'dataset_dir': config.get('dataset', 'dataset_root'),
-    'feature_tp': list(feature_type_scope_dict.keys())[0], #'drebin',
+    'feature_tp': list(feature_type_scope_dict.keys())[0], # 'drebin',
     'feature_mapping_type': config.get('feature.drebin', 'feature_mp'),
     'learning_algorithm': 'ADV_ENS_BASE'
 }
@@ -40,17 +37,17 @@ ADV_ENS_HP = {
 
 class AdversarialDeepEnsembleMax(BasicDNNModel):
     def __init__(self,
-                 info_dict = None,
-                 hyper_params = None,
+                 info_dict=None,
+                 hyper_params=None,
                  reuse=False,
-                 is_saving = True,
-                 init_graph = True,
-                 mode = 'train',
-                 name = 'ADV_NN_ENSEMBLE_MAX'):
+                 is_saving=True,
+                 init_graph=True,
+                 mode='train',
+                 name='ADV_NN_ENSEMBLE_MAX'):
         """
         hardened deep ensemble incorporated with ''max'' attack
         @param info_dict: None,
-        @param hyper_params: hyper parameters,
+        @param hyper_params: hyper-parameters,
         @param reuse: reuse the variables or not
         @param is_saving: option for saving weights
         @param init_graph: initialize graph
@@ -109,21 +106,21 @@ class AdversarialDeepEnsembleMax(BasicDNNModel):
 
         super(AdversarialDeepEnsembleMax, self).__init__(info_dict,
                                                          hyper_params,
-                                                         reuse = reuse,
+                                                         reuse=reuse,
                                                          is_saving=self.is_saving,
-                                                         init_graph= self.init_graph,
-                                                         mode = self.mode,
-                                                         name = name
+                                                         init_graph=self.init_graph,
+                                                         mode=self.mode,
+                                                         name=name
                                                          )
 
-    def model_graph(self, reuse = False):
+    def model_graph(self, reuse=False):
         """Continue to conduct initialization"""
         self.base_model_names = ["{}_{}".format(self.model_name, k) for k in range(self.base_model_count)]
         self.base_models = [self.base_model_method(name=self.base_model_names[k],
                                                    is_saving=False,
-                                                   init_graph= False,
+                                                   init_graph=False,
                                                    reuse=False,
-                                                   mode= self.mode) \
+                                                   mode=self.mode) \
                             for k in range(self.base_model_count)]
 
         self.x_input = tf.placeholder(dtype=tf.float32, shape=[None, self.input_dim], name='ENS_X')
@@ -137,7 +134,7 @@ class AdversarialDeepEnsembleMax(BasicDNNModel):
         self.logits, self.y_tensor = self.forward(self.x_input, self.y_input, reuse)
         self.model_inference()
 
-    def forward(self, x_tensor, y_tensor, reuse = False):
+    def forward(self, x_tensor, y_tensor, reuse=False):
 
         for k in range(self.base_model_count):
             self.base_models[k].mode = self.mode
@@ -149,14 +146,14 @@ class AdversarialDeepEnsembleMax(BasicDNNModel):
             logits_list = []
             for k in range(self.base_model_count):
                 _1, _2, _logits = self.base_models[k].nn(x_input,
-                                                         is_training = is_training,
-                                                         name = self.base_model_names[k],
-                                                         reuse = True)
+                                                         is_training=is_training,
+                                                         name=self.base_model_names[k],
+                                                         reuse=True)
                 logits_list.append(_logits)
             return tf.reduce_mean(tf.stack(logits_list, axis=0), axis=0)  # average
 
         self.ens_nn = ens_graph
-        _ = self.ens_nn(x_tensor, is_training= False)
+        _ = self.ens_nn(x_tensor, is_training=False)
 
         if self.mode == 'train':
             adv_x, rtn_x, rtn_y = self.gen_max_adv_mal_graph(x_tensor, y_tensor)
@@ -239,7 +236,7 @@ class AdversarialDeepEnsembleMax(BasicDNNModel):
             return -1 * tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits,
                                                                        labels=y)
 
-        def  _get_random_noises(x_batch):
+        def _get_random_noises(x_batch):
             eta = tf.random_uniform([1, ], 0, self.hp_params.eta)
             init_perturbations = tf.random_uniform(tf.shape(x_batch),
                                                    minval=-1.,
@@ -252,7 +249,7 @@ class AdversarialDeepEnsembleMax(BasicDNNModel):
             )
             return init_perturbations
 
-        def _get_single_perturb(inner_maximizer, mal_x, mal_y, trials = 0):
+        def _get_single_perturb(inner_maximizer, mal_x, mal_y, trials=0):
             if trials == 0:
                 return tf.stop_gradient(inner_maximizer.graph(mal_x, mal_y))
             elif trials > 0:
@@ -268,9 +265,10 @@ class AdversarialDeepEnsembleMax(BasicDNNModel):
 
                 adv_mal_batch_ext = tf.stop_gradient(
                     inner_maximizer.graph(
-                    init_x_batch_ext,
-                    mal_y_batch_ext
-                ))
+                        init_x_batch_ext,
+                        mal_y_batch_ext
+                    )
+                )
 
                 adv_mal_losses = tf.stop_gradient(_loss_fn(adv_mal_batch_ext, mal_y_batch_ext))
 
@@ -288,12 +286,13 @@ class AdversarialDeepEnsembleMax(BasicDNNModel):
         N = len(self.inner_maximizers)
         for index in range(N):
             adv_mal_list.append(
-                _get_single_perturb(self.inner_maximizers[index], mal_x_tensor, mal_y_tensor, trials= self.trial_list[index])
+                _get_single_perturb(self.inner_maximizers[index], mal_x_tensor, mal_y_tensor,
+                                    trials=self.trial_list[index])
             )
 
         adv_mal_instances_final = tf.concat(adv_mal_list, axis=0)
 
-        y_adv_mal = tf.tile(mal_y_tensor, [N,])
+        y_adv_mal = tf.tile(mal_y_tensor, [N, ])
         losses = _loss_fn(adv_mal_instances_final, y_adv_mal)
 
         adv_mal_instances_final = tf.reshape(adv_mal_instances_final, [N, -1, x_shape[1]])
@@ -307,18 +306,18 @@ class AdversarialDeepEnsembleMax(BasicDNNModel):
                                          clip_value_max=1.,
                                          clip_value_min=0.)
 
-        rtn_adv_batch = tf.concat([max_adv, pben_x_tensor], axis= 0)
+        rtn_adv_batch = tf.concat([max_adv, pben_x_tensor], axis=0)
         rtn_prist_batch = tf.concat([mal_x_tensor, pben_x_tensor], axis=0)
-        rtn_y_tensor = tf.concat([mal_y_tensor, ben_y_tensor], axis = 0)
+        rtn_y_tensor = tf.concat([mal_y_tensor, ben_y_tensor], axis=0)
         return rtn_adv_batch, rtn_prist_batch, rtn_y_tensor
 
-    def train(self, trainX = None, trainy = None, valX = None, valy = None):
+    def train(self, trainX=None, trainy=None, valX=None, valy=None):
         """train deep ensemble"""
         if trainX is None or trainy is None or valX is None or valy is None:
             trainX, valX, _ = utils.read_joblib(config.get('feature.' + self.feature_tp, 'dataX'))
             trainy, valy, _ = utils.read_joblib(config.get('feature.' + self.feature_tp, 'datay'))
 
-        train_input = utils.DataProducer(trainX, trainy,self.hp_params.batch_size, n_epochs=self.hp_params.n_epochs)
+        train_input = utils.DataProducer(trainX, trainy, self.hp_params.batch_size, n_epochs=self.hp_params.n_epochs)
         val_input = utils.DataProducer(valX, valy, self.hp_params.batch_size*5, name='val')
 
         # perturb the malware representations
@@ -434,9 +433,9 @@ class AdversarialDeepEnsembleMax(BasicDNNModel):
         with sess.as_default():
             _y_xent = sess.run(
                 self.y_xent,
-                feed_dict= {
+                feed_dict={
                     self.x_input: perturbed_mal_instances,
-                    self.y_input: np.tile(val_maly, [N,]),
+                    self.y_input: np.tile(val_maly, [N, ]),
                     self.is_training: False
                 }
             )
@@ -455,4 +454,3 @@ def _main():
 
 if __name__ == "__main__":
     _main()
-

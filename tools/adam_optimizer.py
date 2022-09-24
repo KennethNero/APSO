@@ -5,6 +5,8 @@ The reason is the TF adam optimizer may have some issues. Please look the 'Unrol
 
 import tensorflow as tf
 tf.get_logger().setLevel('ERROR')
+
+
 class TensorOptimizer(object):
     """Functional-stype optimizer which does not use TF Variables.
     UnrolledOptimizers implement optimizers where the values being optimized
@@ -61,6 +63,7 @@ class TensorOptimizer(object):
         raise NotImplementedError(
             "init_optim_state should be defined in each subclass")
 
+
 class TensorAdam(TensorOptimizer):
     """
     The Adam optimizer defined in https://arxiv.org/abs/1412.6980.
@@ -106,7 +109,7 @@ class TensorAdam(TensorOptimizer):
 
 class NadamOptimizer(TensorAdam):
     def __init__(self, lr=0.001, mu=0.9, ups=0.999, epsilon=1e-9):
-        super(NadamOptimizer, self).__init__(lr = lr, beta1= mu, beta2= ups, epsilon= epsilon)
+        super(NadamOptimizer, self).__init__(lr=lr, beta1=mu, beta2=ups, epsilon=epsilon)
 
     def _apply_gradients(self, grads, x, optim_state):
         new_x = [None] * len(x)

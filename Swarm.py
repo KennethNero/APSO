@@ -6,7 +6,6 @@ import numpy as np
 from copy import deepcopy
 import random
 import subprocess
-from common import Defender
 
 random.seed(0)
 np.random.seed(0)
@@ -54,7 +53,6 @@ class Swarm:
         self.useOfRef = False
         self.useDanger = danger
 
-
     def setBestPosition(self, newPosition):
         self.bestPosition = deepcopy(newPosition)
 
@@ -76,7 +74,7 @@ class Swarm:
         """
 
         # Propagates the defender object with the assumption that the model passed in, is malicious.
-        # Dumps out 'y_pred' which should be the models confidence that it is malicious.
+        # Dumps out 'y_pred' which should be the model's confidence that it is malicious.
 
         mal_conf = self.targetModel.predict([apk], [1])
 
@@ -95,13 +93,11 @@ class Swarm:
         return [int(1 if mal_conf[0][1] > .5 else 0), float(mal_conf[0][1])]
         # return [int(label), float(conf)]
 
-
-    def fitnessScore(self,apk):
+    def fitnessScore(self, apk):
         # Takes in APK and baseline confidence.
         label, conf = self.getProbs(apk)
         fitness = self.baselineConfidence - conf
         return fitness, conf, label
-
 
     def calculateBaselineConfidence(self):
         """
@@ -163,7 +159,6 @@ class Swarm:
         return True
 
     def searchOptimum(self, inputDir):
-
         # If its not malicious then exit
         if self.label != 1:
             return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
@@ -213,8 +208,6 @@ class Swarm:
         # To compound the files, switch out str(self.apkFile) in first arg, to p.pathToAPK.
 
         # adv ref = 0, Ref = 12
-
-        # TODO: Check obfuscation string, if the first 2 bits are equal to 1, set flag to true . If true, set them to 0
 
         if not self.useDanger:
             obf_string = "0" + obf_string[1:12] + "0" + obf_string[13:]    # All ref turned off

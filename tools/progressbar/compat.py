@@ -24,7 +24,7 @@
 # Python 3.x (and backports) use a modified iterator syntax
 # This will allow 2.x to behave with 3.x iterators
 try:
-  next
+    next
 except NameError:
     def next(iter):
         try:
@@ -37,9 +37,10 @@ except NameError:
 
 # Python < 2.5 does not have "any"
 try:
-  any
+    any
 except NameError:
-   def any(iterator):
-      for item in iterator:
-         if item: return True
-      return False
+    def any(iterator):
+        for item in iterator:
+            if item:
+                return True
+        return False

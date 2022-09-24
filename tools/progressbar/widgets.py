@@ -35,8 +35,10 @@ else:
 
 
 def format_updatable(updatable, pbar):
-    if hasattr(updatable, 'update'): return updatable.update(pbar)
-    else: return updatable
+    if hasattr(updatable, 'update'):
+        return updatable.update(pbar)
+    else:
+        return updatable
 
 
 class Widget(AbstractWidget):
@@ -92,7 +94,6 @@ class Timer(Widget):
         """Formats time as the string "HH:MM:SS"."""
 
         return str(datetime.timedelta(seconds=int(seconds)))
-
 
     def update(self, pbar):
         """Updates the widget to show the elapsed time."""
@@ -207,6 +208,7 @@ class AnimatedMarker(Widget):
         self.curmark = (self.curmark + 1) % len(self.markers)
         return self.markers[self.curmark]
 
+
 # Alias for backwards compatibility
 RotatingMarker = AnimatedMarker
 
@@ -216,7 +218,7 @@ class Counter(Widget):
 
     __slots__ = ('format_string',)
 
-    def __init__(self, format='%d'):
+    def __init__(self, format = '%d'):
         self.format_string = format
 
     def update(self, pbar):
@@ -244,6 +246,7 @@ class FormatLabel(Timer):
     }
 
     __slots__ = ('format_string',)
+
     def __init__(self, format):
         self.format_string = format
 
@@ -257,7 +260,8 @@ class FormatLabel(Timer):
                    context[name] = value
                 else:
                    context[name] = transform(value)
-            except: pass
+            except:
+                pass
 
         return self.format_string % context
 
@@ -294,7 +298,6 @@ class Bar(WidgetHFill):
         self.right = right
         self.fill = fill
         self.fill_left = fill_left
-
 
     def update(self, pbar, width):
         """Updates the progress bar and its subcomponents."""

@@ -59,9 +59,9 @@ C2 = 1
 
 def logPSOOutput():
     if defModel == 'basic_dnn':
-        model=Learner()    
+        model = Learner()
     else:
-        model=Defender(defModel)
+        model = Defender(defModel)
     if inputDir is not None:
         samples = []
         for dirPath, _, fileNames in os.walk(inputDir):

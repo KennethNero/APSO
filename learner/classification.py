@@ -4,9 +4,11 @@ from abc import ABCMeta, abstractmethod
 import tensorflow as tf
 tf.get_logger().setLevel('ERROR')
 
+
 class Classifier(object):
     """Abstract base class for all classifier classes."""
     __metaclass__ = ABCMeta
+
     def __init__(self):
         pass
 
@@ -18,7 +20,7 @@ class Classifier(object):
         raise NotImplementedError
 
     @abstractmethod
-    def forward(self, x_tensor, y_tensor, reuse = False):
+    def forward(self, x_tensor, y_tensor, reuse=False):
         """
         let data pass through the neural network
         :param x_tensor: input data
@@ -28,7 +30,7 @@ class Classifier(object):
         :param reuse: Boolean
         :return: Null
         """
-        raise  NotImplementedError
+        raise NotImplementedError
 
     @abstractmethod
     def model_inference(self):
@@ -38,7 +40,7 @@ class Classifier(object):
         raise NotImplementedError
 
     @abstractmethod
-    def train(self, trainX = None, trainy = None, valX = None, valy = None):
+    def train(self, trainX=None, trainy=None, valX=None, valy=None):
         """
         train a model upon (trainX, trainy), if value is none, default data will be leveraged
         :param trainX: np.2Darray

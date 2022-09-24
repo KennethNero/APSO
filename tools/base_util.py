@@ -15,6 +15,7 @@ except Exception:
 
 ENC_KEY = 'cab228a122d3486bac7fab148e8b5aba'
 
+
 def retrive_files_set(base_dir, dir_ext, file_ext):
     """
     get file paths given the directory
@@ -50,9 +51,11 @@ def retrive_files_set(base_dir, dir_ext, file_ext):
 
     return file_path_set
 
+
 def retrive_all_dirs(base_dir, dir_ext):
     dir_ = os.path.join(base_dir,dir_ext)
     return set([os.path.join(dir_, sub_[0]) for sub_ in os.walk(dir_)])
+
 
 def crypt_identifier(idf, seed=2345):
     if idf == '':
@@ -69,6 +72,7 @@ def crypt_identifier(idf, seed=2345):
     head_letter = random.choice(string.ascii_lowercase)
     return head_letter + md5_transform(idf).hexdigest()[start_idx:start_idx+length]
 
+
 def random_string(code):
     def sha1_transform(code):
         if isinstance(code, basestring):
@@ -76,6 +80,7 @@ def random_string(code):
         else:
             return hashlib.sha1(code)
     return random.choice(string.ascii_uppercase) + sha1_transform(code).hexdigest()[:8]
+
 
 def string_on_code(code):
     def md5_transform(code):
@@ -85,6 +90,7 @@ def string_on_code(code):
             return hashlib.md5(code)
     return 'md5' + md5_transform(code).hexdigest()
 
+
 def random_name(seed=2345, code = 'abc'):
     if not isinstance(seed, int):
         raise TypeError("Integer required.", type(seed), seed)
@@ -92,16 +98,19 @@ def random_name(seed=2345, code = 'abc'):
     sample_letters = [random.sample(string.ascii_letters, 1)[0] for _ in range(12)]
     return random.choice(string.ascii_uppercase) + random_string(code) + ''.join(sample_letters)
 
+
 def apply_encryption(base_string):
     key = ENC_KEY * int(len(base_string) / len(ENC_KEY) + 1)
     xor_string = ''.join(chr(ord(x) ^ ord(y)) for (x, y) in zip(base_string, key))
     return base64.b64encode(xor_string.encode('utf-8')).decode('utf-8')
 
-def read_file_by_fileinput(file_path, inplace = True):
+
+def read_file_by_fileinput(file_path, inplace=True):
     try:
         return fileinput.input(file_path, inplace=inplace)
     except IOError as ex:
         raise IOError(str(ex))
+
 
 def read_full_file(file_path):
     try:
@@ -110,12 +119,14 @@ def read_full_file(file_path):
     except IOError as ex:
         raise IOError("Cannot load file '{}'".format(file_path))
 
+
 def write_whole_file(obj, file_path):
     try:
         with open(file_path, 'w') as wh:
             wh.write(obj)
     except IOError as ex:
         raise IOError("Cannot write file '{}'".format(file_path))
+
 
 def load_json(json_path):
     try:
@@ -125,6 +136,7 @@ def load_json(json_path):
     except IOError as ex:
         raise IOError(str(ex) + ": Unable to load json file.")
 
+
 def dump_json(obj_dict, file_path):
     try:
         import json
@@ -133,7 +145,8 @@ def dump_json(obj_dict, file_path):
     except IOError as ex:
         raise IOError(str(ex) + ": Fail to dump dict using json toolbox")
 
-def fix_invalid_id(comp_name, spec_chr = '@&'):
+
+def fix_invalid_id(comp_name, spec_chr='@&'):
     comp_name = comp_name.replace('$;', spec_chr+';')
     comp_name = comp_name.replace('$/', spec_chr+'/')
     if comp_name[-1] == '$':
@@ -143,8 +156,9 @@ def fix_invalid_id(comp_name, spec_chr = '@&'):
     return comp_name
 
 
-def defix_invalid_id(comp_name,spec_chr = '@&'):
+def defix_invalid_id(comp_name, spec_chr='@&'):
     return comp_name.replace(spec_chr, '$')
+
 
 def path_split(path):
     dir_name = os.path.dirname(path)
@@ -152,17 +166,20 @@ def path_split(path):
     file_name, ext_name = os.path.splitext(base_name)
     return dir_name, file_name, ext_name
 
-def rename_file(src,dst):
+
+def rename_file(src, dst):
     try:
-        os.rename(src,dst)
+        os.rename(src, dst)
     except IOError as ex:
-        raise IOError("Cannot rename the file '{}' to '{}'".format(src,dst))
+        raise IOError("Cannot rename the file '{}' to '{}'".format(src, dst))
+
 
 def rename_dir(old, new):
     try:
         os.renames(old, new)
     except IOError as ex:
         raise IOError("Cannot rename the folder '{}' to '{}'".format(old, new))
+
 
 def rename_tree_dir(old_name, new_name):
     old_folder_names = re.findall(r'[^\/]*?\/', (old_name + '/').replace('//', '/'))
@@ -175,7 +192,8 @@ def rename_tree_dir(old_name, new_name):
         dst_dir = ''.join(new_folder_names[:i+1])
         if os.path.exists(src_dir) and \
             src_dir != dst_dir:
-            rename_dir(src_dir,dst_dir)
+            rename_dir(src_dir, dst_dir)
+
 
 def copy_file(src, dst_dir, dst_name_w_ext = None):
     if not os.path.isfile(src):
@@ -194,16 +212,17 @@ def copy_file(src, dst_dir, dst_name_w_ext = None):
 
     shutil.copy(src, dst)
 
+
 def get_sha256file(file_path):
-  fh = open(file_path, 'rb')
-  sha256 = hashlib.sha256()
-  while True:
-      data = fh.read(8192)
-      if not data:
-          break
-      sha256.update(data)
-  return sha256.hexdigest()
+    fh = open(file_path, 'rb')
+    sha256 = hashlib.sha256()
+    while True:
+        data = fh.read(8192)
+        if not data:
+            break
+        sha256.update(data)
+    return sha256.hexdigest()
 
 
 if __name__ == "__main__":
-    print(apply_encryption('sendTextMessage')) # special symbols
+    print(apply_encryption('sendTextMessage'))  # special symbols

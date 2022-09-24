@@ -2,7 +2,7 @@ import os
 import sys
 import time
 
-from learner.basic_DNN import BasicDNNModel, INFO, DNN_HP
+from learner.basic_DNN import BasicDNNModel  # , INFO, DNN_HP
 from attacker.attack_manager import AttackManager
 from learner import DNN_HP
 from defender import AdversarialTrainingDNN, ADV_TRAIN_HP
@@ -125,7 +125,6 @@ class Defender(object):
             return self.defense.test_rpst()
         else:
             return self.defense.test(apks, gt_lables)
-
 
     def pred_adv(self):
         from config import config
