@@ -108,5 +108,5 @@ def logPSOOutput():
                 str(numberOfQueries)))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # Try not to break this (test)
     logPSOOutput()
