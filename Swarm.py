@@ -247,7 +247,8 @@ class Swarm:
               str(self.apkFile) + " " + \
               str(self.iteration) + \
               " /usr/local/Obfuscapk/src/" + \
-              " /data/yin-group/models/adv-dnn-ens/workingModel/APSO/obfuscapk_tmp" # This is 8
+              " /data/yin-group/models/adv-dnn-ens/workingModel/APSO/obfuscapk_tmp " + \
+              str(apkBasename)
 
         # print("\t\'" + str(cmd) + "\'")
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
