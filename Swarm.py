@@ -94,7 +94,8 @@ class Swarm:
         # label = out.split()[-2]
 
         # print("\t\tDEBUG:: get_probs - out = '"+str(out)+"'")
-
+        from IPython import embed
+        embed()
         return [int(1 if mal_conf[0][1] > .5 else 0), float(mal_conf[0][1])]
         # return [int(label), float(conf)]
 
