@@ -100,3 +100,7 @@ class particle:
             W = self.wEND + ((self.wSTART - self.wEND) * (1 - (T / maxIterations)))
             self.W = W
             return self.W
+        
+    def logOutput(self,iteration,sampleNumber):
+        with open("results/" + sampleNumber + "/" + self.particleID,"a") as f:
+            f.write("%s,%s,%s,%s,%s,%s\n" %(iteration, self.currentPosition, self.bestPosition, self.currentFitness, self.bestFitness, self.currentVelocity()))

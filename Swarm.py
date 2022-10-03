@@ -13,7 +13,7 @@ np.random.seed(0)
 
 class Swarm:
 
-    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e, defenseModel, converge, danger):
+    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e, defenseModel, converge, danger,sampleNumber):
         """
 
         Parameters
@@ -51,11 +51,13 @@ class Swarm:
         self.targetModel = defenseModel
         self.converge = converge
         self.iteration = 1
-
+        
         # Flags for use of dangerous obfuscators (they break things)
         self.useOfAdvRef = False
         self.useOfRef = False
         self.useDanger = danger
+        self.sampleNumber=sampleNumber
+
 
     def setBestPosition(self, newPosition):
         self.bestPosition = deepcopy(newPosition)
@@ -142,6 +144,9 @@ class Swarm:
             p = particle(x)
             p.setW()
             p.currentVelocity = {}
+            with open("results/" + self.sampleNumber + "/" + p.particleID + ".csv",'w') as f:
+                f.write("Iteration, Current_Position, Best Position, Current_Fitness, Best_Fitness, Velocity\n")
+                
             p.pathToAPK = deepcopy(self.apkFile)
             self.randomizeParticle(p, p.currentPosition, inputDir)
 
@@ -278,7 +283,7 @@ class Swarm:
             print("-- ParticleID: " + str(p.particleID)+" | Current Fitness: "+str(p.currentFitness) +
                   "\t| Position: "+posString+" | Label / Confidence: " + str(self.label) + " / " + str(newProba) +
                   "\n\t| Velocity: "+velocityString)
-
+            
             # Modify awareness of the best fitness of particle / swarm accordingly
             if newFitness > p.bestFitness:
                 p.setBestFitnessScore(newFitness)
@@ -292,6 +297,8 @@ class Swarm:
                 self.setBestPosition(p.bestPosition)
             else:
                 os.remove(newAPKPath)   # We don't need it anymore
+            #LOG HERE
+            p.logOutput(self.iteration,self.sampleNumber)
         else:
             # This means that the obfuscation process made things bad
             # Randomize the particle, try it again.
