@@ -67,15 +67,17 @@ def logPSOOutput():
         for dirPath, _, fileNames in os.walk(inputDir):
             for f in fileNames:
                 samples.append(os.path.abspath(os.path.join(dirPath, f)))
-
     else:
         samples = [inputSample]
+
     with open('Malware_Samples_PSO_Results.csv', 'w') as f:
         f.write(
             'Sample,BaselineConfidence,BaselineFitness,Prediction_Before_PSO, Confidence_After_PSO,Fitness_After_PSO,'
             'Prediction_After_PSO,Iteration,Number_of_Required_Changes,Best_Position, Number_Of_Queries\n')
+
     if not os.path.exists("results"):
         os.mkdir("results")
+
     for i, samplePath in enumerate(samples):
         print("Handling... " + str(samplePath))
         if not os.path.exists("results/" + str(i)):
@@ -88,7 +90,7 @@ def logPSOOutput():
         swarm.initializeSwarmAndParticles(inputDir)
         print('Model Prediction Before PSO= %s\n' % baselineLabel)
         print('Baseline Confidence= %s\n' % (str(baselineConfidence)))
-        _, _, iterations, numberOfQueries = swarm.searchOptimum(inputDir)
+        _, _, iterations, numberOfQueries = swarm.searchOptimum(inputDir)  # This is where the magic happens
 
         print('Model Prediction After PSO= %s' % swarm.label)  # later change 1= benign, 2 = mal
         print('Model Confidence After PSO= %s' % swarm.bestProba)
@@ -108,5 +110,5 @@ def logPSOOutput():
                 str(numberOfQueries)))
 
 
-if __name__ == "__main__":  # Try not to break this (test)
+if __name__ == "__main__":
     logPSOOutput()

@@ -5,42 +5,46 @@
 in_apk="$1"    # Full path to APK to mod 
 in_arr="$2"    # A 16 char string of 0s and 1s 
 out_fldr="$3"    # The folder the out file goes into (has a / at the end) 
-in_appnd="$4"    # Prefix to be appended to output file 
-org_apk="$5"    # The ORIGINAL path to the APK being modded. Used for output generation 
- 
-# If there are at least 3 underscores AND Particle in the name AND [0] is a case of 0 or 1 
-# split at the third underscore 
- 
-# Set some unwieldy things. 
-out_apk="$2_Particle_$4_"$(basename $5) # The out file. Modify as required
-# The following indexes in $2 map to the following obfuscations 
-#  
-# 0 : AdvancedReflection  | # Costly  
-# 1 : ArithmeticBranch  |  
-# 2 : AssetEncryption  |  
-# 3 : CallIndirection  |  
-# 4 : ConstStringEncryption |  
-# 5 : DebugRemoval  |  
-# 6 : FieldRename  |  
-# 7 : Goto   |  
-# 8 : LibEncryption  |  
-# 9 : MethodOverload  |  
-# 10: MethodRename  |  
-# 11: Nop   |  
-# 12: Reflection  | # Costly 
-# 13: Reorder   |  
-# 14: ResStringEncryption |  
-# 15: RandomManifest  | 
- 
-obf_arr=("AdvancedReflection" "ArithmeticBranch" "AssetEncryption" "CallIndirection" 
-"ConstStringEncryption" "DebugRemoval" "FieldRename" "Goto" "LibEncryption" "MethodOverload" 
-"MethodRename" "Nop" "Reflection" "Reorder" "ResStringEncryption" "RandomManifest") 
- 
-# Make sure we're where we need to be 
-cd "/usr/local/Obfuscapk/src/" 
- 
-# Begin the string construction 
-cmd="python3 -m obfuscapk.cli -w /data/yin-group/models/adv-dnn-ens/workingModel/APSO/obfuscapk_tmp -d $out_fldr$out_apk " 
+in_appnd="$4"    # Prefix to be appended to output file
+original_apk="$5"
+iter_num="$6"    # The iteration that a particle is on when created
+obf_location="$7" # Absolute path of '....Obfuscapk/src/'
+obf_temp_dir=$8   # Temp directory for use in obfuscapk
+
+# If there are at least 3 underscores AND Particle in the name AND [0] is a c                      ase of 0 or 1
+# split at the third underscore
+
+# Set some unwieldy things.
+out_apk="p${in_appnd}_i${iter_num}_$(basename "$5")"
+# old_out_apk="$2_Particle_$4_"$(basename $5) # The out file. Modify as required
+# The following indexes in $2 map to the following obfuscations
+#
+# 0 : AdvancedReflection  | # Costly
+# 1 : ArithmeticBranch  |
+# 2 : AssetEncryption  |
+# 3 : CallIndirection  |
+# 4 : ConstStringEncryption |
+# 5 : DebugRemoval  |
+# 6 : FieldRename  |
+# 7 : Goto   |
+# 8 : LibEncryption  |
+# 9 : MethodOverload  |
+# 10: MethodRename  |
+# 11: Nop   |
+# 12: Reflection  | # Costly
+# 13: Reorder   |
+# 14: ResStringEncryption |
+# 15: RandomManifest  |
+
+obf_arr=("AdvancedReflection" "ArithmeticBranch" "AssetEncryption" "CallIndirection"
+"ConstStringEncryption" "DebugRemoval" "FieldRename" "Goto" "LibEncryption" "MethodOverload"
+"MethodRename" "Nop" "Reflection" "Reorder" "ResStringEncryption" "RandomManifest")
+
+# Make sure we're where we need to be
+cd "$obf_location"
+
+# Begin the string construction
+cmd="python3 -m obfuscapk.cli -w ${obf_temp_dir} -d $out_fldr$out_apk "
  
 # Loop through the in_arr, append the things 
 for (( i=0; i<${#in_arr}; i++ )); do 

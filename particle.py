@@ -15,7 +15,7 @@ class particle:
     def __init__(self, particleid=0):
         self.particleID = particleid
         self.bestFitness = 0
-        self.pastPositions = []
+        self.pastPositions = []         # Logging!
         self.currentPosition = None
         self.particleDistanceArr = []
         self.nextPosition = None
@@ -72,6 +72,11 @@ class particle:
         self.currentVelocity = deepcopy(v)
 
     def calculateNextPosition(self, swarmBestPosition, T, C1, C2, maxIterations):
+        """
+        Leverages current velocity along with change constants to determine whether any given obfuscator is turned
+        on or off, then returns a representative string value.
+
+        """
         nextPosition = deepcopy(self.currentPosition)
         self.standardVelocity(swarmBestPosition, T, C1, C2, maxIterations)
 

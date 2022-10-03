@@ -31,25 +31,29 @@ class Swarm:
         self.flag = None
         self.bestProba = None
         self.baselineConfidence = None
+
         # The actual fields we need RIGHT NOW
         self.particles = []
         self.baseLabel = None
         self.label = 1
         self.numberOfParticles = numOfParticles
         self.bestFitness = 0
-        self.dLength = 2 ** 16  # 2 choices, 16 dimensions
+        self.dLength = 2 ** 16                  # 2 choices, 16 dimensions
         self.numberOfQueries = 0
         self.bestPosition = [0] * self.dLength  # Everything starts as on in 17 dimensions
         self.randomMutation = randomMutation
         self.maxQueries = maxQueries
         self.pastFitness = []
-        self.apkFile = x                # Original APK file PATH that is being modified xyz.apk
+        self.apkFile = x                        # Original APK file PATH that is being modified xyz.apk
         self.earlyTermination = e
         self.C1 = C1
         self.C2 = C2
         self.targetModel = defenseModel
         self.converge = converge
-        self.useOfAdvRef = False        # flags for use of dangerous obfuscators (they break things)
+        self.iteration = 1
+
+        # Flags for use of dangerous obfuscators (they break things)
+        self.useOfAdvRef = False
         self.useOfRef = False
         self.useDanger = danger
 
@@ -70,7 +74,6 @@ class Swarm:
         Returns
         -------
         An array in the form [prediction, confidence]
-
         """
 
         # Propagates the defender object with the assumption that the model passed in, is malicious.
@@ -159,10 +162,13 @@ class Swarm:
         return True
 
     def searchOptimum(self, inputDir):
+        """
+        Primary Intro point for APSO -- this is where the magic happens after swarm/particles initilized.
+
+        """
         # If its not malicious then exit
         if self.label != 1:
             return self.bestPosition, self.bestFitness, 0, self.numberOfQueries
-        iteration = 1
 
         # While we have queries left and are still malicious
         while self.numberOfQueries < self.maxQueries:
@@ -181,26 +187,28 @@ class Swarm:
                 posString += str(e)
 
             print('++ Iteration %s - Best Fitness %s - Best Position %s - Confidence %s - Number of Queries %s' % (
-                str(iteration), str(self.bestFitness), posString, self.bestProba, self.numberOfQueries))
+                str(self.iteration), str(self.bestFitness), posString, self.bestProba, self.numberOfQueries))
 
-            if self.earlyTermination > 0 and len(self.pastFitness[(-1*self.earlyTermination):]) >= \
-                    self.earlyTermination and len(set(self.pastFitness[(-1*self.earlyTermination):])) == 1:
-                return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
+            if 0 < self.earlyTermination <= len(self.pastFitness[(-1 * self.earlyTermination):]) and \
+                    len(set(self.pastFitness[(-1 * self.earlyTermination):])) == 1:
+                return deepcopy(self.bestPosition), self.bestFitness, self.iteration, self.numberOfQueries
 
             if self.label != 1:
-                return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
-            iteration = iteration + 1
+                return deepcopy(self.bestPosition), self.bestFitness, self.iteration, self.numberOfQueries
+            self.iteration = self.iteration + 1
 
         print("== Number of Queries: %s" % self.numberOfQueries)
-        return deepcopy(self.bestPosition), self.bestFitness, iteration, self.numberOfQueries
+        return deepcopy(self.bestPosition), self.bestFitness, self.iteration, self.numberOfQueries
 
     def check(self, p, inputDir):
         """
         p is our particle
         new position is current position
         """
-        apkFile = self.apkFile
-        apkBasename = os.path.basename(apkFile)  # Could error out if the pathToApK is not actually a parsable path
+
+        # !!Begin re-naming situation!!
+        newAPKPath = self.apkFile
+        apkBasename = os.path.basename(newAPKPath.rsplit("_", 1)[-1])
         obf_string = ""
         for e in p.currentPosition:
             obf_string += str(e)
@@ -226,19 +234,27 @@ class Swarm:
                 if not self.useOfRef and obf_string[12] == "1":
                     self.useOfRef = True
 
-        cmd = "bash gen_sample.sh " + str(self.apkFile) + " " + obf_string + \
-              " "+inputDir+" " + str(p.particleID) + " " + str(self.apkFile)
+        cmd = "bash gen_sample.sh " + \
+              str(newAPKPath)+" " + \
+              obf_string+" " + \
+              inputDir+" " + \
+              str(p.particleID) + " " + \
+              str(self.apkFile) + " " + \
+              str(self.iteration) + \
+              " /usr/local/Obfuscapk/src/" + \
+              " /data/yin-group/models/adv-dnn-ens/workingModel/APSO/obfuscapk_tmp" # This is 8
+
         # print("\t\'" + str(cmd) + "\'")
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 
         # Communicate so the output goes to python, and is auto setting the return code
-        out, err = proc.communicate()
+        _, _ = proc.communicate()
         ret_code = proc.returncode
 
         if ret_code == 0:
             # Generate the output name of the new APK
-            APKDir = str(os.path.dirname(self.apkFile))
-            newAPKPath = APKDir + "/" + obf_string+"_Particle_"+str(p.particleID)+"_"+str(apkBasename)
+            APKDir = str(os.path.dirname(newAPKPath))
+            newAPKPath = APKDir + "/p" + str(p.particleID) + "_i" + str(self.iteration) + "_" + str(apkBasename)
             # print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
             p.pathToAPK = newAPKPath
 
