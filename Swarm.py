@@ -144,7 +144,7 @@ class Swarm:
             p = particle(x)
             p.setW()
             p.currentVelocity = {}
-            with open("results/" + self.sampleNumber + "/" + p.particleID + ".csv",'w') as f:
+            with open("results/" + str(self.sampleNumber) + "/" + str(p.particleID) + ".csv",'w') as f:
                 f.write("Iteration, Current_Position, Best Position, Current_Fitness, Best_Fitness, Velocity\n")
                 
             p.pathToAPK = deepcopy(self.apkFile)
