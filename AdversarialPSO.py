@@ -82,9 +82,9 @@ def logPSOOutput():
         print("Handling... " + str(samplePath))
         if not os.path.exists("results/" + str(i)):
             os.mkdir("results/" + str(i))
-        for k in range(numOfParticles):
-            if not os.path.exists("results/" + str(i)+"/"+ str(k)):
-                os.mkdir("results/" + str(i)+"/"+ str(k))
+        # for k in range(numOfParticles):
+        #     if not os.path.exists("results/" + str(i)+"/"+ str(k)):
+        #         os.mkdir("results/" + str(i)+"/"+ str(k))
 
         swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination, model,
                       converge, danger,i)

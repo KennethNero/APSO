@@ -100,8 +100,6 @@ class Swarm:
 
     def fitnessScore(self, apk):
         # Takes in APK and baseline confidence.
-        from IPython import embed
-        embed()
         label, conf = self.getProbs(apk)
         fitness = self.baselineConfidence - conf
         return fitness, conf, label
