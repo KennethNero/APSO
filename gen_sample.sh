@@ -9,13 +9,14 @@ in_appnd="$4"    # Prefix to be appended to output file
 original_apk="$5"
 iter_num="$6"    # The iteration that a particle is on when created
 obf_location="$7" # Absolute path of '....Obfuscapk/src/'
-obf_temp_dir=$8   # Temp directory for use in obfuscapk
+obf_temp_dir="$8"   # Temp directory for use in obfuscapk
+apkBasename="$9"  # The thing to name the apk correctly.
 
 # If there are at least 3 underscores AND Particle in the name AND [0] is a c                      ase of 0 or 1
 # split at the third underscore
 
 # Set some unwieldy things.
-out_apk="p${in_appnd}_i${iter_num}_$(basename "$5")"
+out_apk="p${in_appnd}_i${iter_num}_${apkBasename}"
 # old_out_apk="$2_Particle_$4_"$(basename $5) # The out file. Modify as required
 # The following indexes in $2 map to the following obfuscations
 #
