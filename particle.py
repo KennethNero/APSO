@@ -103,4 +103,4 @@ class particle:
         
     def logOutput(self,iteration,sampleNumber):
         with open("results/" + str(sampleNumber) + "/" + str(self.particleID)+ ".csv","a") as f:
-            f.write("%s,%s,%s,%s,%s,%s\n" %(iteration, self.currentPosition, self.bestPosition, self.currentFitness, self.bestFitness, self.currentVelocity()))
+            f.write("%s,%s,%s,%s,%s,%s\n" %(iteration, self.currentPosition, self.bestPosition, self.currentFitness, self.bestFitness, self.currentVelocity))
