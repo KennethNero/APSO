@@ -72,8 +72,9 @@ def logPSOOutput():
 
     with open('Malware_Samples_PSO_Results.csv', 'w') as f:
         f.write(
-            'Sample,Sample_Path,BaselineConfidence,BaselineFitness,Prediction_Before_PSO, Confidence_After_PSO,Fitness_After_PSO,'
-            'Prediction_After_PSO,Iteration,Number_of_Required_Changes,Best_Position, Number_Of_Queries\n')
+            'Sample,Sample_Path,BaselineConfidence,BaselineFitness,Prediction_Before_PSO, Confidence_After_PSO,'
+            'Fitness_After_PSO,Prediction_After_PSO,Iteration,Number_of_Required_Changes,Best_Position,'
+            'Number_Of_Queries\n')
 
     if not os.path.exists("results"):
         os.mkdir("results")
@@ -87,7 +88,7 @@ def logPSOOutput():
         #         os.mkdir("results/" + str(i)+"/"+ str(k))
 
         swarm = Swarm(numOfParticles, randomMutations, maxQueries, samplePath, C1, C2, earlyTermination, model,
-                      converge, danger,i)
+                      converge, danger, i)
         baselineConfidence, baselineLabel = swarm.calculateBaselineConfidence()
         print("Searching Optimum Adversarial Example... %s\n" % i)
         swarm.initializeSwarmAndParticles(inputDir)
@@ -107,7 +108,7 @@ def logPSOOutput():
         print('Required number of changes (L1)= %s' % numberOfChanges)
         with open('Malware_Samples_PSO_Results.csv', 'a') as f:
             f.write('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % (
-                str(i),samplePath ,str(baselineConfidence),
+                str(i), samplePath, str(baselineConfidence),
                 str(1 - baselineConfidence), str(swarm.baseLabel), str(swarm.bestProba),
                 str(swarm.bestFitness), str(swarm.label), str(iterations), str(numberOfChanges), posString,
                 str(numberOfQueries)))

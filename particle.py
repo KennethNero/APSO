@@ -15,15 +15,15 @@ class particle:
     def __init__(self, particleid=0):
         self.particleID = particleid
         self.bestFitness = 0
-        self.pastPositions = []         # Logging!
+        self.pastPositions = []  # Logging!
         self.currentPosition = None
         self.particleDistanceArr = []
         self.nextPosition = None
         self.bestPosition = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.currentVelocity = None
-        self.pathToAPK = None           # One that its testing 0001110001_......apk
+        self.pathToAPK = None  # One that its testing 0001110001_......apk
         self.currentFitness = 0
-        self.useOfAdvRef = False        # flags for use of dangerous obfuscators (they break things)
+        self.useOfAdvRef = False  # flags for use of dangerous obfuscators (they break things)
         self.useOfRef = False
 
     def setNextPosition(self, newPosition):
@@ -61,9 +61,9 @@ class particle:
             # i = index, x = value
             # If either of these aren't the same, move in that direction. If they are the best, stay.
             # maintain 2 lists, currentPosition, and the second one which will have distances
-            exploration = C1*np.random.uniform(0.0, 1.0) * (swarmBestPosition[i] - particleCurrentPosition[i])
+            exploration = C1 * np.random.uniform(0.0, 1.0) * (swarmBestPosition[i] - particleCurrentPosition[i])
 
-            exploitation = C2*np.random.uniform(0.0, 1.0) * (particleBestPosition[i] - particleCurrentPosition[i])
+            exploitation = C2 * np.random.uniform(0.0, 1.0) * (particleBestPosition[i] - particleCurrentPosition[i])
 
             inertia = self.currentVelocity[i] * self.W
 
@@ -100,7 +100,8 @@ class particle:
             W = self.wEND + ((self.wSTART - self.wEND) * (1 - (T / maxIterations)))
             self.W = W
             return self.W
-        
-    def logOutput(self,iteration,sampleNumber):
-        with open("results/" + str(sampleNumber) + "/" + str(self.particleID)+ ".csv","a") as f:
-            f.write("%s,%s,%s,%s,%s,%s\n" %(iteration, self.currentPosition, self.bestPosition, self.currentFitness, self.bestFitness, self.currentVelocity))
+
+    def logOutput(self, iteration, sampleNumber):
+        with open("results/" + str(sampleNumber) + "/" + str(self.particleID) + ".csv", "a") as f:
+            f.write("%s,%s,%s,%s,%s,%s\n" % (iteration, self.currentPosition, self.bestPosition, self.currentFitness,
+                                             self.bestFitness, self.currentVelocity))

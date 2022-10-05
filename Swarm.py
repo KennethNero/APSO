@@ -13,7 +13,8 @@ np.random.seed(0)
 
 class Swarm:
 
-    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e, defenseModel, converge, danger,sampleNumber):
+    def __init__(self, numOfParticles, randomMutation, maxQueries, x, C1, C2, e,
+                 defenseModel, converge, danger, sampleNumber):
         """
 
         Parameters
@@ -56,8 +57,7 @@ class Swarm:
         self.useOfAdvRef = False
         self.useOfRef = False
         self.useDanger = danger
-        self.sampleNumber=sampleNumber
-
+        self.sampleNumber = sampleNumber
 
     def setBestPosition(self, newPosition):
         self.bestPosition = deepcopy(newPosition)
@@ -144,7 +144,7 @@ class Swarm:
             p = particle(x)
             p.setW()
             p.currentVelocity = {}
-            with open("results/" + str(self.sampleNumber) + "/" + str(p.particleID) + ".csv",'w') as f:
+            with open("results/" + str(self.sampleNumber) + "/" + str(p.particleID) + ".csv", 'w') as f:
                 f.write("Iteration, Current_Position, Best Position, Current_Fitness, Best_Fitness, Velocity\n")
                 
             p.pathToAPK = deepcopy(self.apkFile)
@@ -168,7 +168,7 @@ class Swarm:
 
     def searchOptimum(self, inputDir):
         """
-        Primary Intro point for APSO -- this is where the magic happens after swarm/particles initilized.
+        Primary Intro point for APSO -- this is where the magic happens after swarm/particles initialized.
 
         """
         # If its not malicious then exit
@@ -298,8 +298,8 @@ class Swarm:
                 self.setBestPosition(p.bestPosition)
             else:
                 os.remove(newAPKPath)   # We don't need it anymore
-            #LOG HERE
-            p.logOutput(self.iteration,self.sampleNumber)
+            # LOG HERE
+            p.logOutput(self.iteration, self.sampleNumber)
         else:
             # This means that the obfuscation process made things bad
             # Randomize the particle, try it again.
