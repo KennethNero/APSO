@@ -238,7 +238,8 @@ class Swarm:
                     self.useOfAdvRef = True
                 if not self.useOfRef and obf_string[12] == "1":
                     self.useOfRef = True
-
+        from IPython import embed
+        embed()
         cmd = "bash gen_sample.sh " + \
               str(newAPKPath)+" " + \
               obf_string+" " + \
@@ -265,8 +266,6 @@ class Swarm:
             p.pathToAPK = newAPKPath
 
             # Run the assessment script on this path - get the confidence / label
-            from IPython import embed
-            embed()
             newFitness, newProba, newLabel = self.fitnessScore(p.pathToAPK)
             # os.remove(newAPKPath) # removed for converge
 
