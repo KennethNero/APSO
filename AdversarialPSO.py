@@ -91,10 +91,10 @@ def logPSOOutput():
                       converge, danger, i)
         baselineConfidence, baselineLabel = swarm.calculateBaselineConfidence()
         print("Searching Optimum Adversarial Example... %s\n" % i)
-        swarm.initializeSwarmAndParticles(inputDir)
+        swarm.initializeSwarmAndParticles()
         print('Model Prediction Before PSO= %s\n' % baselineLabel)
         print('Baseline Confidence= %s\n' % (str(baselineConfidence)))
-        _, _, iterations, numberOfQueries = swarm.searchOptimum(outputDir)  # This is where the magic happens
+        _, _, iterations, numberOfQueries = swarm.searchOptimum()  # This is where the magic happens
 
         print('Model Prediction After PSO= %s' % swarm.label)  # later change 1= benign, 2 = mal
         print('Model Confidence After PSO= %s' % swarm.bestProba)
