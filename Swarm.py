@@ -296,8 +296,8 @@ class Swarm:
                 self.setBestFitnessScore(p.bestFitness)
                 self.label = newLabel
                 self.setBestPosition(p.bestPosition)
-            else:
-                os.remove(newAPKPath)   # We don't need it anymore
+            #else:
+             #   os.remove(newAPKPath)   # We don't need it anymore
             # LOG HERE
             p.logOutput(self.iteration, self.sampleNumber)
         else:
