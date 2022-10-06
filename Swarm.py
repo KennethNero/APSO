@@ -238,6 +238,8 @@ class Swarm:
                     self.useOfAdvRef = True
                 if not self.useOfRef and obf_string[12] == "1":
                     self.useOfRef = True
+        from IPython import embed
+        embed()
         outputDir="/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/" + str(self.sampleNumber) + "/"
         cmd = "bash gen_sample.sh " + \
               str(newAPKPath)+" " + \
