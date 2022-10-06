@@ -118,13 +118,13 @@ class Swarm:
         self.bestProba = conf                       # This changes
         return conf, pred
 
-    def initializeSwarmAndParticles(self, inputDir):
+    def initializeSwarmAndParticles(self):
         """
         Does what it says on the box.
         """
         print('Initializing Swarm and Particles...\n')
         self.initializeSwarm()
-        self.initializeParticles(inputDir)
+        self.initializeParticles()
 
     def initializeSwarm(self):
         """
@@ -137,7 +137,7 @@ class Swarm:
         self.bestPosition = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.setBestFitnessScore(0)
 
-    def initializeParticles(self, inputDir):
+    def initializeParticles(self):
         particleList = []
         for x in range(self.numberOfParticles):
             # Set up the initial particle
@@ -148,25 +148,25 @@ class Swarm:
                 f.write("Iteration, Current_Position, Best Position, Current_Fitness, Best_Fitness, Velocity\n")
                 
             p.pathToAPK = deepcopy(self.apkFile)
-            self.randomizeParticle(p, p.currentPosition, inputDir)
+            self.randomizeParticle(p, p.currentPosition)
 
             p.particleDistanceArr.extend(p.currentVelocity)
             particleList.append(deepcopy(p))
         self.particles = deepcopy(particleList)
 
-    def randomizeParticle(self, p, basePosition, inputDir):
+    def randomizeParticle(self, p, basePosition):
         """
         Randomly selects obfuscators based on the velocity, applies them to a file, and returns the modified filename
         of the apk after it was modified.
         """
         p.currentVelocity = [np.random.uniform(0.0, 1.0) for i in range(16)]  # Randomize init particle
         p.currentPosition = [1 if p.currentVelocity[i] <= self.changeRate else 0 for i in range(16)]
-        self.check(p, inputDir)
+        self.check(p)
 
         p.pastPositions.append(p.currentPosition)
         return True
 
-    def searchOptimum(self, inputDir):
+    def searchOptimum(self):
         """
         Primary Intro point for APSO -- this is where the magic happens after swarm/particles initialized.
 
@@ -183,7 +183,7 @@ class Swarm:
             # Get the next position, and check / update those positions while adding them to the historical record
             for p in self.particles:
                 p.calculateNextPosition(self.bestPosition, self.numberOfQueries, self.C1, self.C2, self.maxQueries)
-                self.check(p, inputDir)
+                self.check(p)
             self.pastFitness.append(self.bestFitness)
             posString = ""
 
@@ -205,7 +205,7 @@ class Swarm:
         print("== Number of Queries: %s" % self.numberOfQueries)
         return deepcopy(self.bestPosition), self.bestFitness, self.iteration, self.numberOfQueries
 
-    def check(self, p, inputDir):
+    def check(self, p):
         """
         p is our particle
         new position is current position
@@ -243,7 +243,7 @@ class Swarm:
         cmd = "bash gen_sample.sh " + \
               str(newAPKPath)+" " + \
               obf_string+" " + \
-              inputDir+" " + \
+              "results/"+ str(self.sampleNumber) +" " + \
               str(p.particleID) + " " + \
               str(self.apkFile) + " " + \
               str(self.iteration) + \
@@ -304,4 +304,4 @@ class Swarm:
         else:
             # This means that the obfuscation process made things bad
             # Randomize the particle, try it again.
-            self.randomizeParticle(p, p.currentPosition, inputDir)
+            self.randomizeParticle(p, p.currentPosition)

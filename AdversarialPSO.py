@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(
     description="Metamorphic engine guided with PSO that modifies assembly code while keeping the same functionality")
 parser.add_argument("-i", "--input", help="Input directory", default=None)
 parser.add_argument("-s", "--sample", help="Single input file", default=None)
-parser.add_argument("-o", "--output", help="Output directory", default=None)
+parser.add_argument("-o", "--output", help="Output directory", default="/results")
 parser.add_argument("-c", "--converge", help="Enables node convergence to best swarm state", default=False)
 parser.add_argument("-d", "--debug", action="store_true", help="print debug information", default=False)
 parser.add_argument("-p", "--numOfParticles", help="Number of particles in the swarm", default=10, type=int)
@@ -94,7 +94,7 @@ def logPSOOutput():
         swarm.initializeSwarmAndParticles(inputDir)
         print('Model Prediction Before PSO= %s\n' % baselineLabel)
         print('Baseline Confidence= %s\n' % (str(baselineConfidence)))
-        _, _, iterations, numberOfQueries = swarm.searchOptimum(inputDir)  # This is where the magic happens
+        _, _, iterations, numberOfQueries = swarm.searchOptimum(outputDir)  # This is where the magic happens
 
         print('Model Prediction After PSO= %s' % swarm.label)  # later change 1= benign, 2 = mal
         print('Model Confidence After PSO= %s' % swarm.bestProba)
