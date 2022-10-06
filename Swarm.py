@@ -265,6 +265,8 @@ class Swarm:
             p.pathToAPK = newAPKPath
 
             # Run the assessment script on this path - get the confidence / label
+            from IPython import embed
+            embed()
             newFitness, newProba, newLabel = self.fitnessScore(p.pathToAPK)
             # os.remove(newAPKPath) # removed for converge
 
