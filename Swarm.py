@@ -240,10 +240,11 @@ class Swarm:
                     self.useOfRef = True
         from IPython import embed
         embed()
+        outputDir="results/" + str(self.sampleNumber) + "/"
         cmd = "bash gen_sample.sh " + \
               str(newAPKPath)+" " + \
-              obf_string+" " + \
-              "results/"+ str(self.sampleNumber) +"\/ " + \
+              obf_string + " " + \
+              outputDir + " " + \
               str(p.particleID) + " " + \
               str(self.apkFile) + " " + \
               str(self.iteration) + \
