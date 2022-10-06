@@ -243,7 +243,7 @@ class Swarm:
         cmd = "bash gen_sample.sh " + \
               str(newAPKPath)+" " + \
               obf_string+" " + \
-              "results/"+ str(self.sampleNumber) +"/ " + \
+              "results/"+ str(self.sampleNumber) +"// " + \
               str(p.particleID) + " " + \
               str(self.apkFile) + " " + \
               str(self.iteration) + \
