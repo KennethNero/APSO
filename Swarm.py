@@ -56,6 +56,8 @@ class Swarm:
         # Flags for use of dangerous obfuscators (they break things)
         self.useOfAdvRef = False
         self.useOfRef = False
+        self.useEncyption=False
+        
         self.useDanger = danger
         self.sampleNumber = sampleNumber
 
@@ -223,11 +225,14 @@ class Swarm:
         # adv ref = 0, Ref = 12
 
         if not self.useDanger:
-            obf_string = "0" + obf_string[1:12] + "0" + obf_string[13:]    # All ref turned off
+            obf_string = "0" + obf_string[1] + "0" + obf_string[3:12] + "0" + obf_string[13] + "0" + obf_string[15:]    # All ref turned off
         else:
             if self.useOfAdvRef:
                 if obf_string[0] == '1':                # Indicates adv ref is on
                     obf_string = "0" + obf_string[1:]   # remove adv reflection from being possible
+            if self.useEncyption:
+                if obf_string[2] == '1' or obf_string[14] == '1':                # Indicates Encyrption obfuscators are on
+                    obf_string = obf_string[:2] + "0" + obf_string[3:14] + "0" + obf_string[15:]   # remove AssetEncryption and ResStringEncryption from being possible
             if self.useOfRef:
                 if obf_string[12] == '1':
                     obf_string = obf_string[:12] + "0" + obf_string[13:]
@@ -238,8 +243,10 @@ class Swarm:
                     self.useOfAdvRef = True
                 if not self.useOfRef and obf_string[12] == "1":
                     self.useOfRef = True
-        from IPython import embed
-        embed()
+                if (not self.useEncyption and obf_string[2] == "1") or (not self.useEncyption and obf_string[14] == "1"):
+                    self.useOfRef = True
+        # from IPython import embed
+        # embed()
         outputDir="/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/" + str(self.sampleNumber) + "/"
         cmd = "bash gen_sample.sh " + \
               str(newAPKPath)+" " + \
