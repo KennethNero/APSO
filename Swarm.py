@@ -214,10 +214,7 @@ class Swarm:
         """
 
         # !!Begin re-naming situation!!
-        if self.converge:
-            newAPKPath = self.apkFile
-        else:
-            newAPKPath = p.pathToAPK
+        newAPKPath = p.pathToAPK
         apkBasename = os.path.basename(newAPKPath.rsplit("_", 1)[-1])
         obf_string = ""
         for e in p.currentPosition:
@@ -304,6 +301,8 @@ class Swarm:
             if p.bestFitness > self.bestFitness:
                 if self.converge:
                     self.apkFile = newAPKPath
+                    for part in self.particles:    
+                        part.pathToAPK = self.apkFile
                 self.bestProba = newProba
                 self.setBestFitnessScore(p.bestFitness)
                 self.label = newLabel
