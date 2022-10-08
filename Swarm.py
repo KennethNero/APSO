@@ -214,7 +214,7 @@ class Swarm:
         """
 
         # !!Begin re-naming situation!!
-        newAPKPath = self.apkFile
+        newAPKPath = p.pathToAPK
         apkBasename = os.path.basename(newAPKPath.rsplit("_", 1)[-1])
         obf_string = ""
         for e in p.currentPosition:
