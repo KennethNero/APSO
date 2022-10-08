@@ -81,7 +81,7 @@ class particle:
         self.standardVelocity(swarmBestPosition, T, C1, C2, maxIterations)
 
         for i, x in enumerate(nextPosition):
-            if self.currentVelocity[i] > np.random.uniform(0.0, 1.0):
+            if self.currentVelocity[i] > 0.5: #np.random.uniform(0.0, 1.0): Lets try 0.5 instead
                 nextPosition[i] = 1
             else:
                 # If the velocity is high in that direction, make 1, else make it a zero. It can flip!!
