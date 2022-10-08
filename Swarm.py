@@ -293,7 +293,6 @@ class Swarm:
             print("-- ParticleID: " + str(p.particleID)+" | Current Fitness: "+str(p.currentFitness) +
                   "\t| Position: "+posString+" | Label / Confidence: " + str(self.label) + " / " + str(newProba) +
                   "\n\t| Velocity: "+velocityString)
-            p.pathToAPK = newAPKPath
             # Modify awareness of the best fitness of particle / swarm accordingly
             if newFitness > p.bestFitness:
                 p.setBestFitnessScore(newFitness)
