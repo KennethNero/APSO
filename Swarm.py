@@ -310,7 +310,7 @@ class Swarm:
              #   os.remove(newAPKPath)   # We don't need it anymore
             # LOG HERE
             p.logOutput(self.iteration, self.sampleNumber)
-        else:
-            # This means that the obfuscation process made things bad
-            # Randomize the particle, try it again.
-            self.randomizeParticle(p, p.currentPosition)
+        # else:
+        #     # This means that the obfuscation process made things bad
+        #     # Randomize the particle, try it again.
+        #     self.randomizeParticle(p, p.currentPosition)
