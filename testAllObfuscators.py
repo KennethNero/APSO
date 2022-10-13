@@ -6,6 +6,8 @@ obf_strings=[]
 for i in range(16):
     s=["0"  if y==i else "1" for y in range(16)]
     obf_strings.append(''.join(s))
+from IPython import embed
+embed()
 outputDir="/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/"
 with open("obfuscatorTest.csv",'w') as f:
     f.write("Obfuscator,Confidence\n")
@@ -31,6 +33,5 @@ for obf_string in obf_strings:
         conf=model.predict([newAPKPath],[1])
         with open("obfuscatorTest.csv",'a') as f:
             f.write("%s,%s\n"%(obf_string,str(conf)))
-        from IPython import embed
-        embed()
+
         
