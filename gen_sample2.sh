@@ -13,7 +13,7 @@ apkBasename="$6"  # The thing to name the apk correctly.
 # split at the third underscore
 
 # Set some unwieldy things.
-out_apk="${apkBasename}_${in_arr}.apk"
+out_apk="test_${in_arr}.apk"
 # old_out_apk="$2_Particle_$4_"$(basename $5) # The out file. Modify as required
 # The following indexes in $2 map to the following obfuscations
 #

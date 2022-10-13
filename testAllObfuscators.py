@@ -26,7 +26,7 @@ for obf_string in obf_strings:
     if ret_code == 0:
         # Generate the output name of the new APK
         #APKDir = str(os.path.dirname(newAPKPath))
-        newAPKPath = "test.apk_" + str(obf_string) + ".apk"
+        newAPKPath = "test_" + str(obf_string) + ".apk"
         from IPython import embed
         embed()
         # print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
