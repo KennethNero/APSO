@@ -4,7 +4,8 @@ import subprocess
 model = Learner()
 obf_strings=[]
 for i in range(16):
-    obf_strings.append(["0"  if y==i else "1" for y in range(16)])
+    s=["0"  if y==i else "1" for y in range(16)]
+    obf_strings.append(''.join(s))
 outputDir="/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/"
 with open("obfuscatorTest.csv",'w') as f:
     f.write("Obfuscator,Confidence\n")
