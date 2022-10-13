@@ -28,7 +28,7 @@ for obf_string in obf_strings:
     if ret_code == 0:
         # Generate the output name of the new APK
         #APKDir = str(os.path.dirname(newAPKPath))
-        newAPKPath = outputDir + "/p" + str(0) + "_i" + str(0) + "_" + "test.apk"
+        newAPKPath = outputDir + "//p" + str(0) + "_i" + str(0) + "_" + "test.apk"
         # print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
         conf=model.predict([newAPKPath],[1])
         with open("obfuscatorTest.csv",'a') as f:
