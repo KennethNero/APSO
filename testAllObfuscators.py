@@ -9,13 +9,10 @@ outputDir="/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/"
 with open("obfuscatorTest.csv",'w') as f:
     f.write("Obfuscator,Confidence\n")
 for obf_string in obf_strings:
-    cmd = "bash gen_sample.sh " + \
+    cmd = "bash gen_sample2.sh " + \
           "/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/test.apk"+" " + \
           str(obf_string) + " " + \
           outputDir + " " + \
-          str(0) + " " + \
-          "/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/test.apk" + " " + \
-          "0" + \
           " /usr/local/Obfuscapk/src/" + \
           " /data/yin-group/models/adv-dnn-ens/workingModel/APSO/obfuscapk_tmp " + \
           "test.apk"
@@ -28,7 +25,7 @@ for obf_string in obf_strings:
     if ret_code == 0:
         # Generate the output name of the new APK
         #APKDir = str(os.path.dirname(newAPKPath))
-        newAPKPath = outputDir + "//p" + str(0) + "_i" + str(0) + "_" + "test.apk"
+        newAPKPath = "test.apk" + str(obf_string)
         # print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
         conf=model.predict([newAPKPath],[1])
         with open("obfuscatorTest.csv",'a') as f:
