@@ -11,7 +11,7 @@ with open("obfuscatorTest.csv",'w') as f:
 for obf_string in obf_strings:
     cmd = "bash gen_sample.sh " + \
           "/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/test.apk"+" " + \
-          obf_string + " " + \
+          str(obf_string) + " " + \
           outputDir + " " + \
           str(0) + " " + \
           "/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/test.apk" + " " + \
@@ -33,4 +33,6 @@ for obf_string in obf_strings:
         conf=model.predict([newAPKPath],[1])
         with open("obfuscatorTest.csv",'a') as f:
             f.write("%s,%s\n"%(obf_string,str(conf)))
+        from IPython import embed
+        embed()
         
