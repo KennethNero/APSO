@@ -16,7 +16,7 @@ for obf_string in obf_strings:
           outputDir + " " + \
           " /usr/local/Obfuscapk/src/" + \
           " /data/yin-group/models/adv-dnn-ens/workingModel/APSO/obfuscapk_tmp " + \
-          "test2.apk"
+          "test2"
     proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
     
     # Communicate so the output goes to python, and is auto setting the return code
