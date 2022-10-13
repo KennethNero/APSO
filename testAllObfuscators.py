@@ -27,6 +27,8 @@ for obf_string in obf_strings:
         # Generate the output name of the new APK
         #APKDir = str(os.path.dirname(newAPKPath))
         newAPKPath = "test.apk_" + str(obf_string) + ".apk"
+        from IPython import embed
+        embed()
         # print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
         conf=model.predict([newAPKPath],[1])
         with open("obfuscatorTest.csv",'a') as f:
