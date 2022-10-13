@@ -4,10 +4,8 @@ import subprocess
 model = Learner()
 obf_strings=[]
 for i in range(16):
-    s=["0"  if y==i else "1" for y in range(16)]
+    s=["1"  if y==i else "0" for y in range(16)]
     obf_strings.append(''.join(s))
-from IPython import embed
-embed()
 outputDir="/data/yin-group/models/adv-dnn-ens/workingModel/APSO/results/"
 with open("obfuscatorTest.csv",'w') as f:
     f.write("Obfuscator,Confidence\n")
@@ -28,7 +26,7 @@ for obf_string in obf_strings:
     if ret_code == 0:
         # Generate the output name of the new APK
         #APKDir = str(os.path.dirname(newAPKPath))
-        newAPKPath = "test.apk" + str(obf_string)
+        newAPKPath = "test.apk_" + str(obf_string) + ".apk"
         # print("New APK Path for particle is: \'"+str(newAPKPath)+"\'")
         conf=model.predict([newAPKPath],[1])
         with open("obfuscatorTest.csv",'a') as f:
