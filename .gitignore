@@ -2,3 +2,4 @@
 obfuscatorTest.csv
 Obfuscapk-master/*
 smallDatasetforDebugging/*
+*.pyc
