@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split
 
 tf.get_logger().setLevel('ERROR')
 
-flags = tf.flags
+flags = tf.compat.v1.flags
 FLAGS = flags.FLAGS
 
 
